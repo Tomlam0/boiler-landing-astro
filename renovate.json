@@ -1,0 +1,60 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":maintainLockFilesWeekly",
+    ":semanticCommits",
+    ":separateMajorReleases",
+    "group:monorepos",
+    "group:recommended",
+    "replacements:all",
+    "workarounds:all",
+    "security:openssf-scorecard"
+  ],
+  "enabledManagers": ["npm", "nvm"],
+  "baseBranchPatterns": ["staging"],
+  "rangeStrategy": "replace",
+  "labels": ["dependencies", "renovate"],
+  "timezone": "Europe/Paris",
+  "schedule": ["before 9am on monday"],
+  "prHourlyLimit": 3,
+  "prConcurrentLimit": 10,
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "🤖 Renovate Dependency Dashboard",
+  "vulnerabilityAlerts": {
+    "labels": ["security", "dependencies"],
+    "minimumReleaseAge": null,
+    "schedule": ["at any time"],
+    "prPriority": 10
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on sunday"]
+  },
+  "packageRules": [
+    {
+      "description": "Group all dependency updates into one PR (non-major)",
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "All non-major dependencies",
+      "automerge": false
+    },
+    {
+      "description": "Require manual review for major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["dependencies", "major", "needs-review"]
+    },
+    {
+      "description": "Delay Node.js major updates for stability",
+      "matchPackageNames": ["node"],
+      "matchManagers": ["nvm"],
+      "minimumReleaseAge": "30 days"
+    },
+    {
+      "description": "Pin TypeScript for stability",
+      "matchPackageNames": ["typescript"],
+      "automerge": false
+    }
+  ],
+  "postUpdateOptions": ["pnpmDedupe"]
+}

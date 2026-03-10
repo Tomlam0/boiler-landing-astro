@@ -1,0 +1,12 @@
+# Projet
+
+> Site vitrine professionnel.
+
+## A propos
+
+Projet est un site vitrine professionnel proposant une gamme de services. Le site offre une presentation claire et elegante des activites et de l'expertise de l'entreprise.
+
+## Pages
+
+- [Accueil](/) : Page principale presentant l'entreprise et ses activites.
+- [Mentions legales](/mentions-legales) : Conditions d'utilisation et politique de confidentialite.

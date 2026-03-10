@@ -1,0 +1,132 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@plugin 'tailwind-scrollbar' {
+  nocompatible: true;
+  preferredstrategy: 'pseudoelements';
+}
+
+@custom-variant dark (&:is(.dark *)); /* In case of dark theme */
+
+/* ==============================================
+   Local Fonts
+   ============================================== */
+
+@font-face {
+  font-family: '';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/font.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: '';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/font.woff2') format('woff2');
+  font-display: swap;
+}
+
+@theme inline {
+  --font-body: ;
+  --font-heading: ;
+}
+
+/* ==============================================
+   Colors
+   ============================================== */
+
+@theme inline {
+  /* Delete tailwind base colors */
+  --color-*: initial;
+
+  --color-black: var(--black);
+  --color-white: var(--white);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 1.6);
+  --radius-xl: calc(var(--radius) * 2);
+}
+
+@layer base {
+  :root {
+    --radius: 0.625rem;
+
+    --black: oklch(0% 0 0);
+    --white: oklch(100% 0 0);
+
+    --background: oklch(100% 0 0);
+    --foreground: oklch(3.9% 0 0);
+
+    --primary: oklch(9% 0 0);
+    --primary-foreground: oklch(98% 0 0);
+
+    --secondary: oklch(14.9% 0 0);
+    --secondary-foreground: oklch(98% 0 0);
+
+    --muted: oklch(14.9% 0 0);
+    --muted-foreground: oklch(63.9% 0 0);
+
+    --accent: oklch(14.9% 0 0);
+    --accent-foreground: oklch(98% 0 0);
+
+    --destructive: oklch(30.6% 0.128 25.2);
+    --destructive-foreground: oklch(98% 0 0);
+
+    --card: oklch(100% 0 0);
+    --card-foreground: oklch(3.9% 0 0);
+
+    --popover: oklch(100% 0 0);
+    --popover-foreground: oklch(3.9% 0 0);
+
+    --border: oklch(89.8% 0 0);
+    --input: oklch(89.8% 0 0);
+    --ring: oklch(3.9% 0 0);
+  }
+  /* .dark {
+  } */
+}
+
+/* ==============================================
+   Document global styles
+   ============================================== */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

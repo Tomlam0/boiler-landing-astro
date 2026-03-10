@@ -1,0 +1,18 @@
+---
+import BaseLayout from '@/layouts/base-layout.astro';
+import Nav from '@/shared/components/layout/nav';
+import Footer from '@/shared/components/layout/footer';
+import type { SeoMetadata } from '@/shared/lib/seo/metadata';
+
+interface Props {
+  metadata: SeoMetadata;
+}
+
+const { metadata } = Astro.props;
+---
+
+<BaseLayout metadata={metadata}>
+  <Nav client:load />
+  <slot />
+  <Footer />
+</BaseLayout>

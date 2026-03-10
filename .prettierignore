@@ -25,15 +25,20 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
-.env*.local
-.env
-.env.test
-# Explicitly do not ignore the .env.example file
-!.env.example
+.env*
 
 # typescript
 *.tsbuildinfo
+tsconfig.json
 
-# IDE settings
-.vscode/
-.cursor/
+# eslint
+.eslintrc.json
+
+# git
+.gitignore
+
+# prettier
+.prettier.config.js
+
+# lockfiles
+pnpm-lock.yaml

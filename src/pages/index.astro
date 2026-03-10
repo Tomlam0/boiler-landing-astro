@@ -1,38 +1,11 @@
 ---
-// Component Imports
-import Counter from '../components/Counter';
-
-const someProps = {
-	count: 0,
-};
-
-// Full Astro Component Syntax:
-// https://docs.astro.build/basics/astro-components/
+import PublicLayout from '@/layouts/public-layout.astro';
+import Hero from '@/features/landing/components/hero';
+import { marketingMetadata } from '@/shared/lib/seo/metadata';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<style>
-			html,
-			body {
-				font-family: system-ui;
-				margin: 0;
-			}
-			body {
-				padding: 2rem;
-			}
-		</style>
-	</head>
-	<body>
-		<main>
-			<Counter {...someProps} client:visible>
-				<h1>Hello, React!</h1>
-			</Counter>
-		</main>
-	</body>
-</html>
+<PublicLayout metadata={marketingMetadata.home}>
+  <main class="mx-auto flex min-h-screen w-full flex-col select-none">
+    <Hero client:load />
+  </main>
+</PublicLayout>
