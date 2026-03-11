@@ -42,3 +42,6 @@ tsconfig.json
 
 # lockfiles
 pnpm-lock.yaml
+
+# project docs
+CLAUDE.md

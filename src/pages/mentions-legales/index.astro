@@ -1,10 +1,7 @@
 ---
 import PublicLayout from '@/layouts/public-layout.astro';
 import { marketingMetadata } from '@/shared/lib/seo/metadata';
-import {
-  termsAndPrivacySections,
-  termsAndPrivacyConfig,
-} from '@/features/legal/data/terms-data';
+import { termsAndPrivacySections, termsAndPrivacyConfig } from '@/features/legal/data/terms-data';
 
 const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocaleDateString(
   'fr-FR',
@@ -137,7 +134,10 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
 
                           if (item.startsWith('• ')) {
                             return (
-                              <li class="text-muted-foreground ml-4 flex list-none text-base leading-relaxed">
+                              <li
+                                class="text-muted-foreground ml-4 flex list-none text-base
+                                  leading-relaxed"
+                              >
                                 <span class="text-primary mr-2">•</span>
                                 <span>{item.substring(2)}</span>
                               </li>
@@ -146,7 +146,10 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
 
                           if (item.endsWith(':') && !item.includes('**')) {
                             return (
-                              <p class="text-foreground mt-4 mb-2 text-base leading-relaxed font-medium">
+                              <p
+                                class="text-foreground mt-4 mb-2 text-base leading-relaxed
+                                  font-medium"
+                              >
                                 {item}
                               </p>
                             );

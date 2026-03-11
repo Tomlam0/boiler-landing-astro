@@ -31,6 +31,8 @@ cva('base', { variants: { variant: { default: 'bg-primary' } } }); // ✅ Always
 ```
 Add shadcn: `pnpm dlx shadcn@latest add <component>` (alias `@/shared/components/ui`).
 
+**CRITICAL — Canonical Tailwind classes:** Always use canonical class names — never arbitrary brackets (`[...]`) when a canonical form exists. Examples: `w-20` not `w-[80px]`, `duration-400` not `duration-[400ms]`, `z-1` not `z-[1]`, `gap-4` not `gap-[16px]`. ESLint enforces this via `eslint-plugin-tailwind-canonical-classes`; `pnpm lint` catches violations, `pnpm lint:fix` auto-fixes. Run `pnpm format` after writing Tailwind classes to auto-sort them.
+
 ## Metadata & Structured Data
 `shared/lib/seo/`: `metadata.ts` (resolveMetadata, marketingMetadata), `structured-data.ts` (JSON-LD @graph).
 ```ts

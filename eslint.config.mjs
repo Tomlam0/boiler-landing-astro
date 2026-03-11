@@ -9,6 +9,7 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
 import astroPlugin from 'eslint-plugin-astro';
 import prettierPlugin from 'eslint-plugin-prettier';
+import tailwindCanonicalClasses from 'eslint-plugin-tailwind-canonical-classes';
 
 export default [
   {
@@ -39,6 +40,7 @@ export default [
       'react-hooks': reactHooksPlugin,
 
       prettier: prettierPlugin,
+      'tailwind-canonical-classes': tailwindCanonicalClasses,
     },
 
     languageOptions: {
@@ -102,6 +104,11 @@ export default [
       '@typescript-eslint/no-use-before-define': [
         'warn',
         { functions: true, classes: true, variables: false },
+      ],
+
+      'tailwind-canonical-classes/tailwind-canonical-classes': [
+        'warn',
+        { cssPath: './src/styles/globals.css' },
       ],
     },
   },

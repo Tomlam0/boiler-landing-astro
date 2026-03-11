@@ -22,7 +22,7 @@ export default function Nav() {
   ];
 
   return (
-    <nav className="bg-background border-b select-none sticky top-0">
+    <nav className="bg-background sticky top-0 border-b select-none">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
