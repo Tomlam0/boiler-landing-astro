@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
 const envSchema = z.object({
-  SITE_URL: z.url(),
+  SITE_URL: z
+    .url()
+    .transform((url) => (url.endsWith('/') ? url : `${url}/`)),
 });
 
 function getEnv() {

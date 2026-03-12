@@ -88,7 +88,7 @@ export default function Hero() {
         delay={0.8}
         transition={{ duration: 0.8 }}
       >
-        <span className="text-xs font-medium tracking-widest text-muted-foreground/50 uppercase">
+        <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
           Défiler
         </span>
         <div className="h-10 w-px bg-foreground/15" />
