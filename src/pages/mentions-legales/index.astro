@@ -15,14 +15,14 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
 
 <PublicLayout metadata={marketingMetadata.terms}>
   <div class="flex min-h-screen flex-col">
-    <main class="flex-1 px-4 py-16 select-text">
+    <main class="flex-1 px-4 pt-36 pb-16 select-text">
       <div class="mx-auto max-w-7xl">
         <div class="mb-8">
           <a
             href="/"
             draggable="false"
             class="mb-6 inline-flex h-8 items-center gap-2 rounded-md px-3 text-xs font-medium
-              transition-colors hover:bg-accent hover:text-accent-foreground"
+              transition-colors hover:bg-muted hover:text-foreground"
           >
             <svg
               width="15"
@@ -49,14 +49,14 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
         <div class="lg:grid lg:grid-cols-4 lg:gap-8">
           {/* Sidebar Navigation - Desktop Only */}
           <aside class="hidden lg:col-span-1 lg:block lg:min-h-screen">
-            <nav class="sticky top-24 space-y-2">
+            <nav class="sticky top-28 space-y-2">
               {
                 termsAndPrivacySections.map((section, index) => (
                   <a
                     href={`#${section.id}`}
                     draggable="false"
                     class="group flex items-center gap-3 rounded-lg p-3 text-sm transition-colors
-                      hover:bg-muted-foreground"
+                      hover:bg-muted"
                   >
                     <div
                       class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full
@@ -64,7 +64,9 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
                     >
                       {index + 1}
                     </div>
-                    <span class="text-muted-foreground transition-colors group-hover:text-white">
+                    <span
+                      class="text-muted-foreground transition-colors group-hover:text-foreground"
+                    >
                       {section.title}
                     </span>
                   </a>

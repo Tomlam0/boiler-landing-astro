@@ -20,7 +20,9 @@ const { metadata } = Astro.props;
   <head>
     <Head metadata={metadata} />
   </head>
-  <body class="flex flex-col font-body text-foreground selection:bg-primary selection:text-white">
+  <body
+    class="grain flex flex-col font-body text-foreground selection:bg-accent selection:text-white"
+  >
     <DevAgentationProvider client:idle />
     <slot />
   </body>

@@ -1,24 +1,40 @@
-import { Button } from '@/shared/components/ui/button';
-
 const currentYear = new Date().getFullYear();
+
+const footerLinks = [
+  { href: '/mentions-legales', label: 'Mentions légales' },
+  { href: '/contact', label: 'Contact' },
+];
 
 export default function Footer() {
   return (
-    <footer className="border-t bg-background select-none">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="md:flex md:items-center md:justify-between">
-          <div className="flex justify-center space-x-6 md:order-2">
-            <Button variant="link" asChild>
-              <a href="/mentions-legales" draggable={false}>
-                Mentions légales
+    <footer className="border-t select-none">
+      <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+        <div className="flex flex-col items-center gap-8 md:flex-row md:justify-between">
+          {/* Brand */}
+          <a
+            href="/"
+            draggable={false}
+            className="font-heading text-xl text-foreground transition-opacity hover:opacity-70"
+          >
+            Logo
+          </a>
+
+          {/* Links */}
+          <div className="flex items-center gap-8">
+            {footerLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                draggable={false}
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {link.label}
               </a>
-            </Button>
+            ))}
           </div>
-          <div className="mt-8 md:order-1 md:mt-0">
-            <p className="text-center text-base text-foreground">
-              &copy; {currentYear} Site. Tous droits réservés.
-            </p>
-          </div>
+
+          {/* Copyright */}
+          <p className="text-sm text-muted-foreground">&copy; {currentYear} Site</p>
         </div>
       </div>
     </footer>
