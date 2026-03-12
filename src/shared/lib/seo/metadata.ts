@@ -14,8 +14,17 @@ export interface SeoMetadata extends MetadataConfig {
   ogImageUrl: string;
 }
 
+const DEFAULT_SITE_NAME = 'Projet';
+
 export function resolveMetadata(config: MetadataConfig): SeoMetadata {
-  const { title, description, path = '', noIndex = false, ogImage, siteName = '' } = config;
+  const {
+    title,
+    description,
+    path = '',
+    noIndex = false,
+    ogImage,
+    siteName = DEFAULT_SITE_NAME,
+  } = config;
 
   const url = `${env.SITE_URL}${path}`;
   const ogImageUrl = ogImage || `${env.SITE_URL}images/og-image.webp`;

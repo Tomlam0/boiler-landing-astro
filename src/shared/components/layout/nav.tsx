@@ -22,11 +22,11 @@ export default function Nav() {
   ];
 
   return (
-    <nav className="bg-background sticky top-0 border-b select-none">
+    <nav className="sticky top-0 border-b bg-background select-none">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <a href="/" draggable={false} className="text-primary text-2xl font-bold">
+            <a href="/" draggable={false} className="text-2xl font-bold text-primary">
               Logo
             </a>
           </div>

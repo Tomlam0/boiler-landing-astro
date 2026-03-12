@@ -3,7 +3,6 @@ import '@/styles/globals.css';
 
 import Head from '@/shared/components/seo/head.astro';
 import { DevAgentationProvider } from '@/shared/components/providers/dev-agentation-provider';
-import { generateStructuredData } from '@/shared/lib/seo/structured-data';
 import type { SeoMetadata } from '@/shared/lib/seo/metadata';
 
 interface Props {
@@ -11,18 +10,17 @@ interface Props {
 }
 
 const { metadata } = Astro.props;
-const jsonLd = generateStructuredData();
 ---
 
 <html
   lang="fr"
-  class="scrollbar scrollbar-hover:scrollbar-thumb-primary/90 scrollbar-thumb-rounded-xs scrollbar-w-3.5 scrollbar-thumb-primary scroll-smooth"
+  class="scrollbar scrollbar-thumb-primary scrollbar-thumb-rounded-xs scrollbar-w-3.5
+    motion-safe:scroll-smooth scrollbar-hover:scrollbar-thumb-primary/90"
 >
   <head>
     <Head metadata={metadata} />
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
-  <body class="font-body text-text selection:bg-primary flex flex-col selection:text-white">
+  <body class="flex flex-col font-body text-foreground selection:bg-primary selection:text-white">
     <DevAgentationProvider client:idle />
     <slot />
   </body>

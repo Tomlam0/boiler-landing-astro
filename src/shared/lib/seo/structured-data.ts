@@ -1,6 +1,7 @@
 import { env } from '@/shared/lib/env';
+import type { SeoMetadata } from '@/shared/lib/seo/metadata';
 
-export function generateStructuredData() {
+export function generateStructuredData(metadata: SeoMetadata) {
   const baseUrl = env.SITE_URL;
 
   const organizationData = {
@@ -46,6 +47,15 @@ export function generateStructuredData() {
         description:
           'Site vitrine de Projet, présentant ses services et ses informations de contact.',
         publisher: { '@id': `${baseUrl}#organization` },
+        inLanguage: 'fr-FR',
+      },
+      {
+        '@type': 'WebPage',
+        '@id': `${metadata.url}#webpage`,
+        url: metadata.url,
+        name: metadata.title,
+        description: metadata.description,
+        isPartOf: { '@id': `${baseUrl}#website` },
         inLanguage: 'fr-FR',
       },
     ],

@@ -30,7 +30,7 @@ export default function Hero() {
         delay={0.2}
         transition={{ duration: 0.4 }}
       >
-        <p className="text-foreground max-w-187.5 text-center text-lg font-light">
+        <p className="max-w-187.5 text-center text-lg font-light text-foreground">
           Découvrez notre site vitrine élégant et intuitif, conçu pour mettre en valeur votre marque
           tout en offrant une expérience utilisateur fluide et captivante, tant sur desktop que sur
           mobile.
