@@ -1,5 +1,8 @@
 {
+  "framework": "astro",
   "git": {
-    "deploymentEnabled": false
+    "deploymentEnabled": {
+      "master": true
+    }
   }
 }
