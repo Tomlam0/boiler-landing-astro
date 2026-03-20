@@ -1,7 +1,15 @@
 import { env } from '@/shared/lib/env';
 import type { SeoMetadata } from '@/shared/lib/seo/metadata';
 
-export function generateStructuredData(metadata: SeoMetadata) {
+interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+export function generateStructuredData(
+  metadata: SeoMetadata,
+  breadcrumbs?: BreadcrumbItem[],
+) {
   const baseUrl = env.SITE_URL;
 
   const organizationData = {
@@ -23,6 +31,11 @@ export function generateStructuredData(metadata: SeoMetadata) {
       url: baseUrl,
       logo: `${baseUrl}images/logo.webp`,
     },
+    sameAs: [
+      // Add social profiles here:
+      // 'https://www.linkedin.com/company/projet',
+      // 'https://twitter.com/projet',
+    ],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
@@ -35,29 +48,44 @@ export function generateStructuredData(metadata: SeoMetadata) {
     },
   };
 
+  const graph: Record<string, unknown>[] = [
+    organizationData,
+    {
+      '@type': 'WebSite',
+      '@id': `${baseUrl}#website`,
+      url: baseUrl,
+      name: 'Projet',
+      description:
+        'Site vitrine de Projet, présentant ses services et ses informations de contact.',
+      publisher: { '@id': `${baseUrl}#organization` },
+      inLanguage: 'fr-FR',
+    },
+    {
+      '@type': 'WebPage',
+      '@id': `${metadata.url}#webpage`,
+      url: metadata.url,
+      name: metadata.title,
+      description: metadata.description,
+      isPartOf: { '@id': `${baseUrl}#website` },
+      inLanguage: 'fr-FR',
+    },
+  ];
+
+  if (breadcrumbs && breadcrumbs.length > 0) {
+    graph.push({
+      '@type': 'BreadcrumbList',
+      '@id': `${metadata.url}#breadcrumb`,
+      itemListElement: breadcrumbs.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.name,
+        item: item.url,
+      })),
+    });
+  }
+
   return {
     '@context': 'https://schema.org',
-    '@graph': [
-      organizationData,
-      {
-        '@type': 'WebSite',
-        '@id': `${baseUrl}#website`,
-        url: baseUrl,
-        name: 'Projet',
-        description:
-          'Site vitrine de Projet, présentant ses services et ses informations de contact.',
-        publisher: { '@id': `${baseUrl}#organization` },
-        inLanguage: 'fr-FR',
-      },
-      {
-        '@type': 'WebPage',
-        '@id': `${metadata.url}#webpage`,
-        url: metadata.url,
-        name: metadata.title,
-        description: metadata.description,
-        isPartOf: { '@id': `${baseUrl}#website` },
-        inLanguage: 'fr-FR',
-      },
-    ],
+    '@graph': graph,
   };
 }
