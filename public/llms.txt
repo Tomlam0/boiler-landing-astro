@@ -9,4 +9,6 @@ Projet est un site vitrine professionnel proposant une gamme de services. Le sit
 ## Pages
 
 - [Accueil](/) : Page principale presentant l'entreprise et ses activites.
+- [Services](/services) : Presentation des services proposes par l'entreprise.
+- [Contact](/contact) : Formulaire de contact et informations pour nous joindre.
 - [Mentions legales](/mentions-legales) : Conditions d'utilisation et politique de confidentialite.

@@ -2,26 +2,26 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "daily"
-      time: "03:00"
-      timezone: "Europe/Paris"
+      interval: 'daily'
+      time: '03:00'
+      timezone: 'Europe/Paris'
 
     open-pull-requests-limit: 0
 
     labels:
-      - "security"
-      - "dependencies"
+      - 'security'
+      - 'dependencies'
 
     # Ignore ALL version updates (only security alerts will be sent via email)
     ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-patch"]
+      - dependency-name: '*'
+        update-types: ['version-update:semver-patch']
 
-      - dependency-name: "*"
-        update-types: ["version-update:semver-minor"]
+      - dependency-name: '*'
+        update-types: ['version-update:semver-minor']
 
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']

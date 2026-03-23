@@ -5,6 +5,8 @@
     "prettier-plugin-classnames",
     "prettier-plugin-merge"
   ],
+  "tailwindFunctions": ["cn", "cva", "clsx"],
+  "tailwindStylesheet": "./src/styles/globals.css",
 
   "trailingComma": "es5",
 

@@ -21,10 +21,8 @@ User-agent: anthropic-ai
 User-agent: Bytespider
 User-agent: CCBot
 User-agent: cohere-ai
-Allow: /
+Disallow: /
 Allow: /llms.txt
-Disallow: /private/
-Disallow: /api/
 
 Sitemap: ${siteUrl}sitemap-index.xml
 Host: ${siteUrl}

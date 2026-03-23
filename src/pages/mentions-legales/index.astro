@@ -1,10 +1,8 @@
 ---
 import PublicLayout from '@/layouts/public-layout.astro';
 import { marketingMetadata } from '@/shared/lib/seo/metadata';
-import {
-  termsAndPrivacySections,
-  termsAndPrivacyConfig,
-} from '@/features/legal/data/terms-data';
+import { env } from '@/shared/lib/env';
+import { termsAndPrivacySections, termsAndPrivacyConfig } from '@/features/legal/data/terms-data';
 
 const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocaleDateString(
   'fr-FR',
@@ -16,16 +14,22 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
 );
 ---
 
-<PublicLayout metadata={marketingMetadata.terms}>
+<PublicLayout
+  metadata={marketingMetadata.terms}
+  breadcrumbs={[
+    { name: 'Accueil', url: env.SITE_URL },
+    { name: 'Mentions légales', url: `${env.SITE_URL}mentions-legales` },
+  ]}
+>
   <div class="flex min-h-screen flex-col">
-    <main class="flex-1 px-4 py-16 select-text">
+    <main class="flex-1 px-4 pt-36 pb-16 select-text">
       <div class="mx-auto max-w-7xl">
         <div class="mb-8">
           <a
             href="/"
             draggable="false"
-            class="hover:bg-accent hover:text-accent-foreground mb-6 inline-flex h-8 items-center
-              gap-2 rounded-md px-3 text-xs font-medium transition-colors"
+            class="mb-6 inline-flex h-8 items-center gap-2 rounded-md px-3 text-xs font-medium
+              transition-colors hover:bg-muted hover:text-foreground"
           >
             <svg
               width="15"
@@ -43,7 +47,7 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
             </svg>
             Retour
           </a>
-          <h1 class="text-foreground mb-4 text-4xl font-bold">Conditions Légales</h1>
+          <h1 class="mb-4 text-4xl font-bold text-foreground">Conditions Légales</h1>
           <p class="text-muted-foreground">
             Dernière mise à jour : {lastUpdatedFormatted}
           </p>
@@ -52,22 +56,24 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
         <div class="lg:grid lg:grid-cols-4 lg:gap-8">
           {/* Sidebar Navigation - Desktop Only */}
           <aside class="hidden lg:col-span-1 lg:block lg:min-h-screen">
-            <nav class="sticky top-24 space-y-2">
+            <nav class="sticky top-28 space-y-2">
               {
                 termsAndPrivacySections.map((section, index) => (
                   <a
                     href={`#${section.id}`}
                     draggable="false"
-                    class="hover:bg-muted-foreground group flex items-center gap-3 rounded-lg p-3
-                      text-sm transition-colors"
+                    class="group flex items-center gap-3 rounded-lg p-3 text-sm transition-colors
+                      hover:bg-muted"
                   >
                     <div
-                      class="bg-primary text-primary-foreground flex h-6 w-6 shrink-0 items-center
-                        justify-center rounded-full text-xs font-medium"
+                      class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full
+                        bg-primary text-xs font-medium text-primary-foreground"
                     >
                       {index + 1}
                     </div>
-                    <span class="text-muted-foreground transition-colors group-hover:text-white">
+                    <span
+                      class="text-muted-foreground transition-colors group-hover:text-foreground"
+                    >
                       {section.title}
                     </span>
                   </a>
@@ -82,15 +88,15 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
               {
                 termsAndPrivacySections.map((section) => (
                   <section id={section.id} class="scroll-mt-24">
-                    <div class="border-border mb-6 border-b pb-4">
-                      <h2 class="text-foreground text-3xl font-bold">{section.title}</h2>
+                    <div class="mb-6 border-b border-border pb-4">
+                      <h2 class="text-3xl font-bold text-foreground">{section.title}</h2>
                     </div>
 
                     <div class="space-y-2">
                       {section.content.map((item) => {
                         if (Array.isArray(item)) {
                           return (
-                            <p class="text-muted-foreground text-base leading-relaxed">
+                            <p class="text-base leading-relaxed text-muted-foreground">
                               {item.map((subItem) => {
                                 if (typeof subItem === 'string') return subItem;
                                 if (subItem.type === 'link') {
@@ -117,7 +123,7 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
 
                           if (item.startsWith('### ')) {
                             return (
-                              <h3 class="text-foreground mt-8 mb-4 text-xl font-semibold first:mt-0">
+                              <h3 class="mt-8 mb-4 text-xl font-semibold text-foreground first:mt-0">
                                 {item.replace('### ', '')}
                               </h3>
                             );
@@ -129,7 +135,7 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
                             !item.startsWith('•')
                           ) {
                             return (
-                              <p class="text-foreground my-4 text-sm font-semibold uppercase">
+                              <p class="my-4 text-sm font-semibold text-foreground uppercase">
                                 {item}
                               </p>
                             );
@@ -137,8 +143,11 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
 
                           if (item.startsWith('• ')) {
                             return (
-                              <li class="text-muted-foreground ml-4 flex list-none text-base leading-relaxed">
-                                <span class="text-primary mr-2">•</span>
+                              <li
+                                class="ml-4 flex list-none text-base leading-relaxed
+                                  text-muted-foreground"
+                              >
+                                <span class="mr-2 text-primary">•</span>
                                 <span>{item.substring(2)}</span>
                               </li>
                             );
@@ -146,20 +155,23 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
 
                           if (item.endsWith(':') && !item.includes('**')) {
                             return (
-                              <p class="text-foreground mt-4 mb-2 text-base leading-relaxed font-medium">
+                              <p
+                                class="mt-4 mb-2 text-base leading-relaxed font-medium
+                                  text-foreground"
+                              >
                                 {item}
                               </p>
                             );
                           }
 
                           return (
-                            <p class="text-muted-foreground text-base leading-relaxed">{item}</p>
+                            <p class="text-base leading-relaxed text-muted-foreground">{item}</p>
                           );
                         }
 
                         if (item.type === 'link') {
                           return (
-                            <p class="text-muted-foreground text-base leading-relaxed">
+                            <p class="text-base leading-relaxed text-muted-foreground">
                               <a
                                 href={item.url}
                                 target={item.target || '_blank'}
@@ -174,7 +186,7 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
                         }
 
                         return (
-                          <p class="text-muted-foreground text-base leading-relaxed">{item.text}</p>
+                          <p class="text-base leading-relaxed text-muted-foreground">{item.text}</p>
                         );
                       })}
                     </div>

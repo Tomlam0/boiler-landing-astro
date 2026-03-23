@@ -4,14 +4,20 @@ import Nav from '@/shared/components/layout/nav';
 import Footer from '@/shared/components/layout/footer';
 import type { SeoMetadata } from '@/shared/lib/seo/metadata';
 
-interface Props {
-  metadata: SeoMetadata;
+interface BreadcrumbItem {
+  name: string;
+  url: string;
 }
 
-const { metadata } = Astro.props;
+interface Props {
+  metadata: SeoMetadata;
+  breadcrumbs?: BreadcrumbItem[];
+}
+
+const { metadata, breadcrumbs } = Astro.props;
 ---
 
-<BaseLayout metadata={metadata}>
+<BaseLayout metadata={metadata} breadcrumbs={breadcrumbs}>
   <Nav client:load />
   <slot />
   <Footer />

@@ -1,0 +1,30 @@
+---
+import PublicLayout from '@/layouts/public-layout.astro';
+import { marketingMetadata } from '@/shared/lib/seo/metadata';
+import { env } from '@/shared/lib/env';
+---
+
+<PublicLayout
+  metadata={marketingMetadata.services}
+  breadcrumbs={[
+    { name: 'Accueil', url: env.SITE_URL },
+    { name: 'Services', url: `${env.SITE_URL}services` },
+  ]}
+>
+  <main class="mx-auto flex min-h-screen w-full flex-col select-none">
+    <section class="flex flex-1 flex-col items-center justify-center px-6 pt-36 pb-32">
+      <span class="mb-6 text-xs font-medium tracking-widest text-muted-foreground uppercase">
+        Nos services
+      </span>
+      <h1
+        class="mb-6 text-center font-heading text-5xl leading-none font-normal tracking-tight
+          text-balance sm:text-7xl"
+      >
+        Ce que nous <em class="text-accent">proposons</em>
+      </h1>
+      <p class="max-w-xl text-center text-lg leading-relaxed font-light text-muted-foreground">
+        Cette page est en cours de construction. Revenez bientôt pour découvrir nos services.
+      </p>
+    </section>
+  </main>
+</PublicLayout>

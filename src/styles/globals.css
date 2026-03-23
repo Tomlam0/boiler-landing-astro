@@ -2,6 +2,10 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
+@import '@fontsource-variable/plus-jakarta-sans';
+@import '@fontsource/instrument-serif';
+@import '@fontsource/instrument-serif/400-italic.css';
+
 @plugin 'tailwind-scrollbar' {
   nocompatible: true;
   preferredstrategy: 'pseudoelements';
@@ -10,32 +14,16 @@
 @custom-variant dark (&:is(.dark *)); /* In case of dark theme */
 
 /* ==============================================
-   Local Fonts
+   Fonts
    ============================================== */
 
-@font-face {
-  font-family: '';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/font.woff2') format('woff2');
-  font-display: swap;
-}
-
-@font-face {
-  font-family: '';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/font.woff2') format('woff2');
-  font-display: swap;
-}
-
 @theme inline {
-  --font-body: ;
-  --font-heading: ;
+  --font-body: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  --font-heading: 'Instrument Serif', 'Georgia', serif;
 }
 
 /* ==============================================
-   Colors
+   Colors — Warm Monochrome + Terracotta Accent
    ============================================== */
 
 @theme inline {
@@ -77,42 +65,46 @@
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) * 1.6);
   --radius-xl: calc(var(--radius) * 2);
+
+  /* Easing curves */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer base {
   :root {
     --radius: 0.625rem;
 
-    --black: oklch(0% 0 0);
-    --white: oklch(100% 0 0);
+    --black: oklch(5% 0.01 60);
+    --white: oklch(99% 0.005 60);
 
-    --background: oklch(100% 0 0);
-    --foreground: oklch(3.9% 0 0);
+    --background: oklch(97.5% 0.008 70);
+    --foreground: oklch(15% 0.015 60);
 
-    --primary: oklch(9% 0 0);
-    --primary-foreground: oklch(98% 0 0);
+    --primary: oklch(20% 0.02 55);
+    --primary-foreground: oklch(97% 0.005 60);
 
-    --secondary: oklch(14.9% 0 0);
-    --secondary-foreground: oklch(98% 0 0);
+    --secondary: oklch(92% 0.01 65);
+    --secondary-foreground: oklch(20% 0.02 55);
 
-    --muted: oklch(14.9% 0 0);
-    --muted-foreground: oklch(63.9% 0 0);
+    --muted: oklch(93% 0.008 65);
+    --muted-foreground: oklch(45% 0.02 55);
 
-    --accent: oklch(14.9% 0 0);
-    --accent-foreground: oklch(98% 0 0);
+    --accent: oklch(55% 0.14 40);
+    --accent-foreground: oklch(99% 0.005 60);
 
     --destructive: oklch(30.6% 0.128 25.2);
     --destructive-foreground: oklch(98% 0 0);
 
-    --card: oklch(100% 0 0);
-    --card-foreground: oklch(3.9% 0 0);
+    --card: oklch(98.5% 0.006 65);
+    --card-foreground: oklch(15% 0.015 60);
 
-    --popover: oklch(100% 0 0);
-    --popover-foreground: oklch(3.9% 0 0);
+    --popover: oklch(98.5% 0.006 65);
+    --popover-foreground: oklch(15% 0.015 60);
 
-    --border: oklch(89.8% 0 0);
-    --input: oklch(89.8% 0 0);
-    --ring: oklch(3.9% 0 0);
+    --border: oklch(88% 0.012 65);
+    --input: oklch(88% 0.012 65);
+    --ring: oklch(55% 0.14 40);
   }
   /* .dark {
   } */
@@ -128,5 +120,33 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* ==============================================
+   Grain texture overlay
+   ============================================== */
+
+@layer utilities {
+  .grain::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+}
+
+/* ==============================================
+   Decorative utilities
+   ============================================== */
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
   }
 }

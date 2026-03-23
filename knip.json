@@ -7,9 +7,7 @@
     "src/features/**/*.{ts,tsx}",
     "src/shared/**/*.{ts,tsx,astro}"
   ],
-  "ignore": [
-    "src/shared/components/ui/**"
-  ],
+  "ignore": ["src/shared/components/ui/**"],
   "ignoreDependencies": [
     "tailwindcss",
     "tw-animate-css",
@@ -21,7 +19,6 @@
     "prettier-plugin-astro"
   ],
   "rules": {
-    "classMembers": "error",
     "enumMembers": "error",
     "exports": "error",
     "files": "error",

@@ -7,12 +7,12 @@ These overrides are **temporary** and should be removed when upstream packages a
 
 ### Current Security Overrides
 
-| Package | Vulnerability | CVE | Severity | Override | Affected Libraries |
-| --- | --- | --- | --- | --- | --- |
-| `tmp` | Arbitrary File Write via symlink | CVE-2025-54798 | Low 2.5/10 | `^0.2.4` | inquirer>external-editor (via @commitlint, commitizen) |
-| `lodash` | Prototype Pollution in `_.unset` and `_.omit` | CVE-2025-13465 | Moderate 6.5 | `^4.17.23` | inquirer (via @commitlint, commitizen) |
-| `ajv` | ReDoS when using `$data` option | CVE-2025-69873 | Moderate | `^8.18.0` *(@commitlint only)* | @commitlint packages (upgraded) |
-| `minimatch` | ReDoS via repeated wildcards / nested extglobs | CVE-2026-26996 | High | `^10.2.3` | @typescript-eslint, eslint, commitizen |
+| Package     | Vulnerability                                  | CVE            | Severity     | Override                       | Affected Libraries                                     |
+| ----------- | ---------------------------------------------- | -------------- | ------------ | ------------------------------ | ------------------------------------------------------ |
+| `tmp`       | Arbitrary File Write via symlink               | CVE-2025-54798 | Low 2.5/10   | `^0.2.4`                       | inquirer>external-editor (via @commitlint, commitizen) |
+| `lodash`    | Prototype Pollution in `_.unset` and `_.omit`  | CVE-2025-13465 | Moderate 6.5 | `^4.17.23`                     | inquirer (via @commitlint, commitizen)                 |
+| `ajv`       | ReDoS when using `$data` option                | CVE-2025-69873 | Moderate     | `^8.18.0` _(@commitlint only)_ | @commitlint packages (upgraded)                        |
+| `minimatch` | ReDoS via repeated wildcards / nested extglobs | CVE-2026-26996 | High         | `^10.2.3`                      | @typescript-eslint, eslint, commitizen                 |
 
 ### When to Remove Overrides
 
