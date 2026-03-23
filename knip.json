@@ -19,7 +19,6 @@
     "prettier-plugin-astro"
   ],
   "rules": {
-    "classMembers": "error",
     "enumMembers": "error",
     "exports": "error",
     "files": "error",
