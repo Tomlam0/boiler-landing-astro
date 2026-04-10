@@ -16,6 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.2
 
+      - name: Strip Git metadata for Vercel
+        run: rm -rf .git
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:

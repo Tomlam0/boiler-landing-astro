@@ -6,6 +6,7 @@ import {
   AnimatePresence,
   motion,
   useInView,
+  useReducedMotion,
   type UseInViewOptions,
   type Transition,
   type Variant,
@@ -56,6 +57,7 @@ function MotionPreset({
   zoom = false,
   motionProps = {},
 }: MotionPresetProps) {
+  const shouldReduceMotion = useReducedMotion();
   const localRef = React.useRef<HTMLElement>(null);
 
   React.useImperativeHandle(ref, () => localRef.current as HTMLElement);
@@ -107,6 +109,15 @@ function MotionPreset({
 
   // Extract animate and transition from motionProps to merge them properly
   const { animate: motionAnimate, transition: motionTransition, ...restMotionProps } = motionProps;
+
+  // Skip animations for users who prefer reduced motion
+  if (shouldReduceMotion) {
+    return (
+      <MotionComponent ref={localRef} className={className} {...restMotionProps}>
+        {children}
+      </MotionComponent>
+    );
+  }
 
   // Merge animate: if motionAnimate exists, merge it with visible variant properties
   const mergedAnimate = isInView
