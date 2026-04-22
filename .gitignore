@@ -37,3 +37,7 @@ yarn-error.log*
 # IDE settings
 .vscode/
 .cursor/
+
+# IA
+.claude/settings.local.json
+.claude/projects/
