@@ -85,10 +85,16 @@ The development workflow follows a structured branching strategy to ensure code 
    - Once approved and merged, changes are automatically deployed to production
    - The `main` branch should always contain stable, production-ready code
 
-### Important Notes
+### Branch Protections
 
-- **Direct commits to `main` are automatically blocked** by husky hooks - all changes must go through the staging process
-- **Only merge commits are allowed on `main`** (e.g., `git merge staging`)
+- **Husky pre-push hook** (local) — blocks direct pushes and force pushes on `main` and `staging`. Bypassable with `--no-verify`, so it relies on personal discipline.
+- **GitHub Branch Protection** (server) — the only real enforcement (disables Merge on red PRs, blocks force pushes even for admins). Requires **GitHub Pro ($4/mo)** on private repos, not available on Free. Strongly recommended as soon as more than one developer pushes to the repo.
+
+For a solo freelance workflow on Free, Husky + discipline (never merge a red PR, never use `--no-verify`) is a reasonable compromise.
+
+### Guidelines
+
+- **Never merge a red PR** — wait for CI checks to pass before clicking Merge
 - **Always test on staging** before merging to production
-- **Keep feature branches focused** - one epic/ticket per branch
-- **Review process is mandatory** for both staging and production merges
+- **Keep feature branches focused** — one epic/ticket per branch
+- **Review is mandatory** for both staging and production merges

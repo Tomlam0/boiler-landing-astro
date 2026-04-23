@@ -39,5 +39,5 @@ yarn-error.log*
 .cursor/
 
 # IA
-.claude/settings.local.json
-.claude/projects/
+.claude/*
+!.claude/settings.json

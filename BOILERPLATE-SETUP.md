@@ -104,8 +104,6 @@ Then `Vercel project settings` > `Environments` and add the same domain than you
 
 This will ensure that the push from the `staging` branch will be deployed to the `preview` environment for acceptance testing, where Vercel will deploy the staging changes to the preview domain.
 
-To avoid multiple Vercel deployments in other branches, you need to go to `Vercel project settings` > `Git` > `Ignored Build Step` > `Run My Bash script` then paste `bash ignore-build.sh`.
-
 ### GitHub Actions Workflow
 
 <div align="right">
@@ -142,5 +140,16 @@ To retrieve the `VERCEL_TOKEN`, follow these steps:
    - `VERCEL_ORG_ID`
    - `VERCEL_PROJECT_ID`
    - `VERCEL_TOKEN`
+
+## 🔐 Before going live — Security reminder
+
+Once the project is delivered or goes to production, make sure 2FA is enabled on the critical accounts:
+
+- **Master email** (ProtonMail / Google) — recovery vector for everything else
+- **Domain registrar** (OVH, Namecheap…) — a compromised registrar = full DNS takeover
+- **DNS / Hosting** — Cloudflare, Vercel
+- **Code** — GitHub
+
+Prefer passkey or TOTP (authenticator app) over SMS. Store recovery codes offline.
 
 ## All is setup ! You can now delete this file and start coding 😎
