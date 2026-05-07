@@ -29,7 +29,6 @@
       "Read(**/serviceAccount*.json)",
       "Read(**/service-account*.json)",
 
-      "Read(**/.vercel/**)",
       "Read(**/.wrangler/**)",
 
       "Bash(cat .env)",
@@ -39,8 +38,6 @@
       "Bash(printenv)",
       "Bash(env)",
 
-      "Bash(vercel --prod:*)",
-      "Bash(vercel deploy --prod:*)",
       "Bash(wrangler deploy:*)",
       "Bash(wrangler pages deploy:*)",
 

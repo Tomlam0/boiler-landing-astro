@@ -73,7 +73,7 @@ The development workflow follows a structured branching strategy to ensure code 
 2. **Commit and Push**
    - Make your changes and commit using `pnpm cz` (following the commit convention above)
    - Push your feature branch to origin
-   - ⚠️ Feature branches are not automatically deployed - only staging and main branches trigger Vercel deployments
+   - ⚠️ Feature branches are not automatically deployed - only staging and main branches trigger Cloudflare deployments
 
 3. **Integration Testing**
    - Create a Pull Request from your feature branch to `staging`
