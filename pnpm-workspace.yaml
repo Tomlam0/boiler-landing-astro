@@ -1,0 +1,16 @@
+# Supply-chain defense: refuse to install any package version released
+# less than 7 days ago.
+minimumReleaseAge: 10080
+
+allowBuilds:
+  esbuild: false
+  msw: true
+  sharp: true
+  unrs-resolver: true
+  workerd: true
+
+overrides:
+  devalue: ^5.6.4
+  vite: ^7.3.3
+
+resolutionMode: highest

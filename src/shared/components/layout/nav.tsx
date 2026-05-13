@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Menu } from 'lucide-react';
 
 import { Button } from '@/shared/components/ui/button';
@@ -11,63 +11,49 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@/shared/components/ui/sheet';
+import { cn } from '@/shared/lib/utils';
 
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   const navItems = [
     { href: '/', label: 'Accueil' },
-    { href: '/services', label: 'Services' },
+    { href: '/blog', label: 'Blog' },
     { href: '/contact', label: 'Contact' },
   ];
 
   return (
-    <nav
-      className="fixed top-0 right-0 left-0 z-50 transition-all select-none"
-      style={{
-        transitionProperty: 'background-color, border-color, backdrop-filter',
-        transitionDuration: '300ms',
-        transitionTimingFunction: 'cubic-bezier(0.25, 1, 0.5, 1)',
-        backgroundColor: scrolled ? 'oklch(97.5% 0.008 70 / 0.85)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        borderBottom: scrolled ? '1px solid oklch(88% 0.012 65 / 0.5)' : '1px solid transparent',
-      }}
-    >
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <nav className="bg-background/80 sticky top-0 z-10 backdrop-blur-md select-none">
+      <div className="mx-auto max-w-6xl px-6 lg:px-8">
         <div className="flex h-18 items-center justify-between">
-          {/* Logo — serif for brand presence */}
+          {/* Logo */}
           <a
             href="/"
             draggable={false}
-            className="font-heading text-2xl text-foreground transition-opacity hover:opacity-70"
+            className="font-heading text-foreground text-xl font-semibold tracking-tight
+              transition-opacity duration-200 hover:opacity-70"
           >
             Logo
           </a>
 
           {/* Desktop nav */}
-          <div className="hidden items-center gap-8 md:flex">
+          <div className="hidden items-center gap-1 md:flex">
             {navItems.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 draggable={false}
-                className="text-sm font-medium text-muted-foreground transition-colors
-                  hover:text-foreground"
+                className={cn(
+                  'text-muted-foreground hover:text-foreground rounded-md px-4 py-2 text-sm',
+                  'transition-colors duration-200'
+                )}
               >
                 {item.label}
               </a>
             ))}
           </div>
 
-          {/* Mobile menu */}
+          {/* Mobile */}
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
@@ -81,15 +67,15 @@ export default function Nav() {
                 <SheetDescription className="sr-only">
                   Menu principal du site contenant les liens de navigation
                 </SheetDescription>
-                <div className="mt-16 flex flex-col items-center gap-8">
+                <div className="mt-12 flex flex-col gap-2">
                   {navItems.map((item) => (
                     <a
                       key={item.href}
                       href={item.href}
                       draggable={false}
                       onClick={() => setIsOpen(false)}
-                      className="font-heading text-3xl text-foreground transition-opacity
-                        hover:opacity-70"
+                      className="text-foreground font-heading rounded-md px-4 py-3 text-2xl
+                        font-medium transition-opacity duration-200 hover:opacity-60"
                     >
                       {item.label}
                     </a>

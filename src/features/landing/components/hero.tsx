@@ -5,94 +5,71 @@ import { MotionPreset } from '@/shared/components/services/motion-preset';
 
 export default function Hero() {
   return (
-    <section
-      className="relative flex min-h-screen flex-col items-center justify-center px-6 pt-36 pb-32
-        select-none"
-    >
-      {/* Decorative line */}
-      <MotionPreset
-        className="absolute top-1/4 left-1/2 h-32 w-px -translate-x-1/2 bg-accent/20"
-        fade
-        slide={{ direction: 'down', offset: 40 }}
-        delay={0}
-        transition={{ duration: 1.2 }}
-      />
-
-      <div className="mx-auto flex max-w-5xl flex-col items-center gap-10">
-        {/* Eyebrow */}
-        <MotionPreset className="flex" fade delay={0.1} transition={{ duration: 0.6 }}>
-          <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
-            Site vitrine &mdash; Portfolio &mdash; Landing page
+    <section className="mx-auto flex min-h-svh max-w-5xl flex-col items-center justify-center px-6">
+      <div className="flex flex-col items-center gap-8 py-32">
+        {/* Overline */}
+        <MotionPreset fade delay={0} transition={{ duration: 0.6 }}>
+          <span className="text-accent font-body text-xs font-medium tracking-widest uppercase">
+            Boilerplate Astro &times; Sanity
           </span>
         </MotionPreset>
 
-        {/* Headline — extreme serif scale */}
+        {/* Headline — the signature element */}
+        <MotionPreset
+          className="flex"
+          slide={{ direction: 'up', offset: 40 }}
+          fade
+          delay={0.1}
+          transition={{ duration: 0.7 }}
+        >
+          <h1
+            className="font-heading text-center text-5xl leading-tight font-semibold tracking-tight
+              text-balance sm:text-6xl md:text-7xl lg:text-8xl lg:leading-none"
+          >
+            Votre vitrine,
+            <br />
+            <span className="text-accent italic">sublim&eacute;e.</span>
+          </h1>
+        </MotionPreset>
+
+        {/* Subtitle */}
         <MotionPreset
           className="flex"
           slide={{ direction: 'up', offset: 30 }}
           fade
-          delay={0.2}
-          transition={{ duration: 0.8 }}
-        >
-          <h1
-            className="text-center font-heading text-5xl leading-none font-normal tracking-tight
-              text-balance sm:text-7xl lg:text-8xl xl:text-9xl"
-          >
-            Votre marque, <em className="text-accent">sublimée</em>
-          </h1>
-        </MotionPreset>
-
-        {/* Description */}
-        <MotionPreset
-          className="flex"
-          slide={{ direction: 'up', offset: 20 }}
-          fade
-          delay={0.35}
-          transition={{ duration: 0.7 }}
+          delay={0.25}
+          transition={{ duration: 0.6 }}
         >
           <p
-            className="max-w-xl text-center text-lg leading-relaxed font-light
-              text-muted-foreground"
+            className="text-muted-foreground max-w-xl text-center text-lg leading-relaxed
+              font-light"
           >
-            Un site élégant et intuitif qui met en valeur votre identité, avec une expérience fluide
-            et captivante sur tous les écrans.
+            Un site vitrine &eacute;l&eacute;gant et administrable, con&ccedil;u pour mettre en
+            valeur votre marque avec une exp&eacute;rience fluide et captivante.
           </p>
         </MotionPreset>
 
-        {/* CTAs */}
+        {/* CTA */}
         <MotionPreset
-          className="flex w-full flex-col items-center gap-4 pt-4 sm:w-auto sm:flex-row"
-          slide={{ direction: 'up', offset: 15 }}
+          className="flex items-center gap-4 pt-4"
+          slide={{ direction: 'up', offset: 20 }}
           fade
-          delay={0.5}
-          transition={{ duration: 0.6 }}
+          delay={0.4}
+          transition={{ duration: 0.5 }}
         >
-          <Button variant="default" size="lg" asChild>
-            <a href="/" draggable={false}>
-              Découvrir
+          <Button asChild size="lg">
+            <a href="/blog" draggable={false}>
+              D&eacute;couvrir le blog
               <ArrowRightIcon className="ml-1" />
             </a>
           </Button>
-          <Button variant="outline" size="lg" asChild>
+          <Button variant="ghost" asChild size="lg">
             <a href="/contact" draggable={false}>
               Nous contacter
             </a>
           </Button>
         </MotionPreset>
       </div>
-
-      {/* Bottom decorative element */}
-      <MotionPreset
-        className="absolute bottom-16 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3"
-        fade
-        delay={0.8}
-        transition={{ duration: 0.8 }}
-      >
-        <span className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
-          Défiler
-        </span>
-        <div className="h-10 w-px bg-foreground/15" />
-      </MotionPreset>
     </section>
   );
 }

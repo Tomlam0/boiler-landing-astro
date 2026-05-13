@@ -18,10 +18,14 @@ Once you've completed all steps, delete this file and proceed with normal develo
 - [`README.md`](./README.md) - Update [`title`](./README.md), [`description`](./README.md)
 - [`package.json`](./package.json#L2) - Update the name
 - [`CLAUDE.md`](./CLAUDE.md) - Update the first line description (project name, stack specifics)
+- [`wrangler.jsonc`](./wrangler.jsonc) - Update the `name` field (Cloudflare worker slug). Ships with `boiler-landing-astro` — replace by your slug. The staging worker name is derived from `--name boiler-landing-astro-staging` in [`deploy-staging.yml`](.github/workflows/deploy-staging.yml) — update that too.
+- [`package.json`](./package.json) - Update `deploy:sanity:staging` and `deploy:sanity:prod` scripts: replace `--url boiler-landing-astro-staging` / `--url boiler-landing-astro` with your real Sanity hostname slugs (**must be unique globally on `<slug>.sanity.studio`**). Quick check: `curl -s https://<slug>.sanity.studio/ | head -c 50` — if it returns `{"statusCode":404...}`, the slug is free.
 
 **Content Pages:**
 
-- [`Terms`](src/features/legal/data/terms-data.ts) - Update the terms and privacy data
+- Mentions légales — populate via the Sanity Studio under the **Legal** document (privacy policy, terms, cookie policy)
+- Landing copy — populate via the Sanity Studio under the **Landing** document (hero title, subtitle, CTAs)
+- Site settings (footer copyright, social links, OG image) — Sanity Studio → **Paramètres**
 
 **Branding & Assets:**
 
@@ -60,6 +64,45 @@ Now that you have a new remote project, you can update the following files:
 ## 🔧 DETAILED SETUP PROCESS
 
 The first step is to create a new email address with ProtonMail and use it to create all new client accounts.
+
+## Sanity Setup
+
+![Sanity](https://img.shields.io/badge/Sanity-F03E2F?style=for-the-badge&logo=sanity&logoColor=white)
+
+<div align="right">
+
+[⬆️ Back to Top](#boilerplate-setup-guide)
+
+</div>
+
+1. **Create a new Sanity account + project**
+   - Go to [Sanity.io](https://www.sanity.io/) → create an **organization** first, then a project inside it.
+   - Note the `projectId` from the project overview.
+
+2. **Datasets**
+   - Sanity creates `production` by default. Create a `development` dataset too:
+     ```bash
+     pnpm exec sanity dataset create development
+     ```
+   - Mark `development` as **Private** if available (Growth Plan).
+
+3. **API Tokens** — Sanity dashboard → API → Tokens. Create 3:
+   - `backend` — **Editor** permissions → goes to `SANITY_API_TOKEN`
+   - `preview` — **Viewer** permissions → goes to `SANITY_API_READ_TOKEN`
+   - `deploy-studio` — custom token with grant `sanity.project.deployStudio` → goes to `SANITY_DEPLOY_STUDIO_TOKEN` (used only by the GitHub deploy workflows)
+
+4. **CORS origins** — Sanity dashboard → API → CORS origins. Add all 4 with "Credentials: Allowed":
+   - `http://localhost:4321` (Astro dev server)
+   - `http://localhost:3333` (local `sanity dev`)
+   - `https://<slug>-staging.sanity.studio` (staging Studio)
+   - `https://<slug>.sanity.studio` (production Studio)
+
+5. **Studio deployment**
+   - The Studio is deployed as a **standalone app on `<slug>.sanity.studio`** (NOT embedded in the Astro site). Two studios — one per environment — both pointing at the `production` dataset:
+     - **Staging studio** → `<slug>-staging.sanity.studio` — preview-only (mutating actions stripped)
+     - **Production studio** → `<slug>.sanity.studio` — full publish rights
+   - Update slugs in [`package.json`](./package.json) scripts (`deploy:sanity:staging` / `deploy:sanity:prod`) before first deploy — must be globally unique on Sanity.
+   - Local dev: `pnpm dev` lances Astro (:4321) + `sanity dev` (:3333) en parallèle, mounted on the `development` dataset.
 
 ## Hosting and CI/CD Setup
 
@@ -107,16 +150,20 @@ To attach a custom domain, go to **Cloudflare Dashboard → Workers & Pages → 
 
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 
-To securely manage sensitive information, we use GitHub Secrets to store environment variables.
-The following secrets are required for the Cloudflare deployment:
+**Secrets** (GitHub repo → Settings → Secrets and variables → Actions → Secrets tab):
 
-- `CLOUDFLARE_API_TOKEN`: Cloudflare API token with **Edit Workers** permissions.
-- `CLOUDFLARE_ACCOUNT_ID`: Your Cloudflare account ID.
+- `CLOUDFLARE_API_TOKEN` — Cloudflare API token with **Edit Workers** permissions
+- `CLOUDFLARE_ACCOUNT_ID` — Cloudflare account ID (dashboard right sidebar)
+- `SANITY_API_TOKEN` — backend token (Editor permissions)
+- `SANITY_API_READ_TOKEN` — preview token (Viewer permissions)
+- `SANITY_DEPLOY_STUDIO_TOKEN` — Sanity token with `sanity.project.deployStudio` grant
 
-The following GitHub **variables** (not secrets) are also used:
+**Variables** (same screen → Variables tab — non-sensitive):
 
-- `SITE_URL`: Production site URL (e.g. `https://example.com`).
-- `SITE_URL_STAGING`: Staging site URL (e.g. `https://staging.example.com`).
+- `SITE_URL` — production site URL (e.g. `https://example.com`)
+- `SITE_URL_STAGING` — staging site URL (e.g. `https://boiler-landing-astro-staging.<your-cf-account>.workers.dev`)
+- `SANITY_PROJECT_ID` — your Sanity projectId
+- `SANITY_DATASET` — usually `production` for both envs (the separation is via Studio workspaces, not datasets)
 
 To create the API token:
 
@@ -135,9 +182,14 @@ To retrieve the account ID: in the Cloudflare dashboard, the account ID is shown
 4. Under the **Secrets** tab, click **New repository secret** and add:
    - `CLOUDFLARE_API_TOKEN`
    - `CLOUDFLARE_ACCOUNT_ID`
+   - `SANITY_API_TOKEN`
+   - `SANITY_API_READ_TOKEN`
+   - `SANITY_DEPLOY_STUDIO_TOKEN`
 5. Under the **Variables** tab, click **New repository variable** and add:
    - `SITE_URL`
    - `SITE_URL_STAGING`
+   - `SANITY_PROJECT_ID`
+   - `SANITY_DATASET`
 
 ## 🔐 Before going live — Security reminder
 
