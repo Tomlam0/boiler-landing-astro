@@ -1,23 +1,42 @@
-import type { QueryParams } from 'sanity';
+import type { ClientPerspective, QueryParams } from '@sanity/client';
 import { sanityClient } from 'sanity:client';
 
-const visualEditingEnabled = import.meta.env.PUBLIC_SANITY_VISUAL_EDITING_ENABLED === 'true';
 const token = import.meta.env.SANITY_API_READ_TOKEN;
+
+function parsePerspective(raw: string | undefined): ClientPerspective | undefined {
+  if (!raw) return undefined;
+  const decoded = decodeURIComponent(raw);
+  // Release-based perspectives are JSON-encoded arrays; drafts is a plain string.
+  if (decoded.startsWith('[')) {
+    try {
+      return JSON.parse(decoded) as ClientPerspective;
+    } catch {
+      return undefined;
+    }
+  }
+  return decoded as ClientPerspective;
+}
 
 export async function loadQuery<QueryResponse>({
   query,
   params,
+  perspectiveCookie = undefined,
 }: {
   query: string;
   params?: QueryParams;
+  perspectiveCookie?: string | undefined;
 }) {
-  if (visualEditingEnabled && !token) {
+  const draftMode = perspectiveCookie ? true : false;
+
+  if (draftMode && !token) {
     throw new Error(
       'The `SANITY_API_READ_TOKEN` environment variable is required during Visual Editing.'
     );
   }
 
-  const perspective = visualEditingEnabled ? 'drafts' : 'published';
+  const perspective: ClientPerspective = draftMode
+    ? (parsePerspective(perspectiveCookie) ?? 'drafts')
+    : 'published';
 
   try {
     const { result, resultSourceMap } = await sanityClient.fetch<QueryResponse>(
@@ -26,26 +45,17 @@ export async function loadQuery<QueryResponse>({
       {
         filterResponse: false,
         perspective,
-        resultSourceMap: visualEditingEnabled ? 'withKeyArraySelector' : false,
-        stega: visualEditingEnabled,
-        ...(visualEditingEnabled ? { token } : {}),
-        useCdn: !visualEditingEnabled && !import.meta.env.DEV,
+        resultSourceMap: draftMode ? 'withKeyArraySelector' : false,
+        stega: draftMode,
+        ...(draftMode ? { token } : {}),
+        useCdn: !draftMode && !import.meta.env.DEV,
       }
     );
 
-    return {
-      data: result,
-      sourceMap: resultSourceMap,
-      perspective,
-    };
+    return { data: result, sourceMap: resultSourceMap, perspective };
   } catch (error) {
-    // Fall back to null when Sanity is unreachable (missing project id, invalid dataset, etc.)
-    // so pages still render their hard-coded fallbacks instead of failing the build.
+    // Soft-fail so pages render with hard-coded fallbacks instead of crashing.
     console.warn('[sanity] loadQuery failed, falling back to null:', (error as Error).message);
-    return {
-      data: null as QueryResponse,
-      sourceMap: undefined,
-      perspective,
-    };
+    return { data: null as QueryResponse, sourceMap: undefined, perspective };
   }
 }

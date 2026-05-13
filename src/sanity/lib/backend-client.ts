@@ -2,9 +2,7 @@ import { createClient } from '@sanity/client';
 
 import { apiVersion, dataset, projectId } from '../env';
 
-// Server-only Sanity client with read token for fetching drafts or private data.
-// Astro routes import this only from frontmatter scripts that run on the server
-// (Cloudflare Worker) or at build time — never from React islands.
+// Server-only — never import from a React island, the token would leak.
 export const backendClient = createClient({
   projectId,
   dataset,

@@ -13,13 +13,25 @@ function pick(key: string): string {
   return value;
 }
 
-const target = process.env.STUDIO_TARGET;
+function maybe(key: string): string | undefined {
+  return process.env[key] ?? fileEnv[key] ?? undefined;
+}
 
-// Inject STUDIO_TARGET into the Studio bundle so sanity.config.ts can read it
-// at runtime to select the right workspace.
+const target = process.env.STUDIO_TARGET;
+const isCloudBuild = target === 'staging' || target === 'production';
+
+// Build-time env injected into the Studio bundle so `sanity.config.ts` can
+// read it via `import.meta.env.*` (Vite replaces statically). Only the URL
+// relevant to the selected target is required; the others are best-effort
+// so a local `sanity dev` doesn't need staging/prod URLs to start.
 const STUDIO_BUILD_ENV: Record<string, string | undefined> = {
   SANITY_PROJECT_ID: pick('SANITY_PROJECT_ID'),
   STUDIO_TARGET: target,
+  SITE_URL: isCloudBuild ? undefined : pick('SITE_URL'),
+  SITE_URL_STAGING:
+    target === 'staging' ? pick('SITE_URL_STAGING') : maybe('SITE_URL_STAGING'),
+  SITE_URL_PRODUCTION:
+    target === 'production' ? pick('SITE_URL_PRODUCTION') : maybe('SITE_URL_PRODUCTION'),
 };
 
 export default defineCliConfig({

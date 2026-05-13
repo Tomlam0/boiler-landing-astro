@@ -2,7 +2,11 @@
 import BaseLayout from '@/layouts/base-layout.astro';
 import Nav from '@/shared/components/layout/nav';
 import Footer from '@/shared/components/layout/footer';
+import SanityVisualEditing from '@/sanity/components/sanity-visual-editing';
+import SanityLive from '@/sanity/components/sanity-live';
+import DisableDraftMode from '@/sanity/components/disable-draft-mode';
 import { getSettings } from '@/sanity/lib/settings';
+import { getDraftModeProps } from '@/sanity/lib/draft-mode';
 import type { SeoMetadata } from '@/shared/lib/seo/metadata';
 
 interface BreadcrumbItem {
@@ -16,6 +20,8 @@ interface Props {
 }
 
 const { metadata, breadcrumbs } = Astro.props;
+const { perspectiveCookie } = getDraftModeProps(Astro.cookies);
+const draftMode = perspectiveCookie !== undefined;
 
 const settings = await getSettings();
 ---
@@ -24,4 +30,13 @@ const settings = await getSettings();
   <Nav client:load />
   <slot />
   <Footer copyright={settings.copyright ?? undefined} social={settings.social} />
+  {
+    draftMode && (
+      <>
+        <SanityVisualEditing client:only="react" />
+        <SanityLive client:only="react" />
+        <DisableDraftMode client:only="react" />
+      </>
+    )
+  }
 </BaseLayout>
