@@ -1,6 +1,6 @@
 import { defineQuery } from 'groq';
 
-import { IMAGE_FRAGMENT } from '@/sanity/lib/fragments';
+import { IMAGE_FRAGMENT } from '@/sanity/content/fragments';
 
 export const ARTICLES_QUERY = defineQuery(`
   *[_type == "article"] | order(publishedAt desc) {

@@ -152,11 +152,14 @@ To attach a custom domain, go to **Cloudflare Dashboard → Workers & Pages → 
 
 **Secrets** (GitHub repo → Settings → Secrets and variables → Actions → Secrets tab):
 
-- `CLOUDFLARE_API_TOKEN` — Cloudflare API token with **Edit Workers** permissions
+- `CLOUDFLARE_API_TOKEN` — Cloudflare API token with **Edit Workers** permissions (used by `wrangler deploy`)
 - `CLOUDFLARE_ACCOUNT_ID` — Cloudflare account ID (dashboard right sidebar)
 - `SANITY_API_TOKEN` — backend token (Editor permissions)
-- `SANITY_API_READ_TOKEN` — preview token (Viewer permissions)
+- `SANITY_API_READ_TOKEN` — preview token (Viewer permissions) — also pushed as Worker secret for `/api/draft-mode/*` + `/api/revalidate/purge`
 - `SANITY_DEPLOY_STUDIO_TOKEN` — Sanity token with `sanity.project.deployStudio` grant
+- `SANITY_REVALIDATE_SECRET` — random string shared with the Sanity webhook (`openssl rand -hex 32`)
+- `CLOUDFLARE_ZONE_ID` — Cloudflare zone ID where the Worker is mapped (dashboard → your domain → Overview)
+- `CLOUDFLARE_PURGE_TOKEN` — API token scoped **only** to `Zone.Cache Purge` permission (separate from the deploy token, narrower blast radius)
 
 **Variables** (same screen → Variables tab — non-sensitive):
 
@@ -185,11 +188,29 @@ To retrieve the account ID: in the Cloudflare dashboard, the account ID is shown
    - `SANITY_API_TOKEN`
    - `SANITY_API_READ_TOKEN`
    - `SANITY_DEPLOY_STUDIO_TOKEN`
+   - `SANITY_REVALIDATE_SECRET`
+   - `CLOUDFLARE_ZONE_ID`
+   - `CLOUDFLARE_PURGE_TOKEN`
 5. Under the **Variables** tab, click **New repository variable** and add:
    - `SITE_URL`
    - `SITE_URL_STAGING`
    - `SANITY_PROJECT_ID`
    - `SANITY_DATASET`
+
+### Sanity webhook → `/api/revalidate/purge`
+
+For instant cache invalidation on publish (vs the 60s TTL fallback), create a Sanity webhook:
+
+1. Sanity dashboard → API → Webhooks → Create webhook
+2. **URL**: `https://<your-domain>/api/revalidate/purge` (one webhook per environment if you want staging+prod auto-purged separately)
+3. **Trigger on**: Create, Update, Delete
+4. **Filter** (optional): `_type in ["article", "homepage", "blogPage", "contactPage", "legal", "settings"]`
+5. **HTTP method**: POST
+6. **Secret**: paste the same value you put in `SANITY_REVALIDATE_SECRET`
+
+When a doc is published, the webhook hits `/api/revalidate/purge`, which validates the signature, maps the doc type/id to Cloudflare cache tags, and calls Cloudflare's purge API. Public visitors see the new content within ~5s.
+
+> Free Sanity plan caps at 2 webhooks per project. If you also use the Next-CMS boilerplate on the same Sanity project, you'll hit the limit fast. Options: upgrade to Sanity Growth ($99/mo, 5 webhooks), or fan-out from one app's revalidate to the others, or accept the 60s TTL fallback on the side without a webhook.
 
 ## 🔐 Before going live — Security reminder
 

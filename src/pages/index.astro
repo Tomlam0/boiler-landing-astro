@@ -2,10 +2,13 @@
 import PublicLayout from '@/layouts/public-layout.astro';
 import Hero from '@/features/landing/components/hero';
 import { resolveMetadata } from '@/shared/lib/seo/metadata';
-import { getDraftModeProps } from '@/sanity/lib/draft-mode';
-import { loadQuery } from '@/sanity/lib/load-query';
+import { addCacheTags } from '@/sanity/content/cache-tags';
+import { getDraftModeProps } from '@/sanity/preview/draft-mode';
+import { loadQuery } from '@/sanity/content/load-query';
 import { HOMEPAGE_QUERY } from '@/sanity/schemas/documents/homepage/homepage.queries';
 import type { HOMEPAGE_QUERY_RESULT } from '@/sanity/sanity.types';
+
+addCacheTags(Astro.response, 'homepage');
 
 const { perspectiveCookie } = getDraftModeProps(Astro.cookies);
 const { data } = await loadQuery<HOMEPAGE_QUERY_RESULT>({

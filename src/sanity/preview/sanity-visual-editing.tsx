@@ -7,6 +7,8 @@ import {
 import { perspectiveCookieName } from '@sanity/preview-url-secret/constants';
 import type { ClientPerspective } from '@sanity/client';
 
+import { waitForMutation } from '@/sanity/preview/wait-for-mutation';
+
 // HistoryAdapter monkey-patches pushState/replaceState because Astro has no
 // client-side router — without this the Studio panel desyncs from the iframe
 // on navigation. Verbatim from the official Sanity Astro visual editing guide.
@@ -50,6 +52,19 @@ export default function SanityVisualEditing() {
   type Navigate = Parameters<HistoryAdapter['subscribe']>[0];
   const navigateRef = useRef<Navigate | undefined>(undefined);
   const lastUrlRef = useRef('');
+  // Snapshot of the dataset's latest mutation timestamp at the moment this
+  // page render happened. We use it to detect when Sanity has propagated a
+  // new mutation before reloading.
+  const baselineMutationRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/draft-mode/check', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { latestMutation: string | null } | null) => {
+        if (d) baselineMutationRef.current = d.latestMutation;
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const sync = () => {
@@ -110,12 +125,12 @@ export default function SanityVisualEditing() {
       onPerspectiveChange={(perspective) => {
         if (setPerspectiveCookie(perspective)) window.location.reload();
       }}
-      refresh={() =>
-        new Promise<void>((resolve) => {
-          window.location.reload();
-          resolve();
-        })
-      }
+      refresh={async () => {
+        // Don't reload until Sanity has actually propagated the mutation —
+        // otherwise rapid edits make the post-reload fetch see stale data.
+        await waitForMutation(baselineMutationRef.current);
+        window.location.reload();
+      }}
     />
   );
 }

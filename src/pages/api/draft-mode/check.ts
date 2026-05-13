@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { perspectiveCookieName } from '@sanity/preview-url-secret/constants';
 
-import { backendClient } from '@/sanity/lib/backend-client';
+import { backendClient } from '@/sanity/clients/backend-client';
 
 export const prerender = false;
 

@@ -1,6 +1,6 @@
 import { defineField, defineType } from 'sanity';
 
-import { withFieldIcon } from '../../../components/field-with-icon';
+import { withFieldIcon } from '../../../studio/field-with-icon';
 import { SOCIAL_ICONS } from '../../../../shared/lib/social-icons';
 
 export const settings = defineType({

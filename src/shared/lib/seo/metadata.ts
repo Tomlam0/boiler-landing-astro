@@ -1,4 +1,4 @@
-import { client } from '@/sanity/lib/client';
+import { client } from '@/sanity/clients/client';
 import { SETTINGS_QUERY } from '@/sanity/schemas/documents/settings/settings.queries';
 import { env } from '@/shared/lib/env';
 

@@ -63,6 +63,9 @@ importers:
       '@sanity/visual-editing':
         specifier: ^5.3.4
         version: 5.3.4(@emotion/is-prop-valid@1.4.0)(@sanity/client@7.22.0)(@sanity/types@5.24.0(@types/react@19.2.14))(react-dom@19.2.4(react@19.2.4))(react-is@19.2.6)(react@19.2.4)(styled-components@6.4.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(typescript@5.9.3)
+      '@sanity/webhook':
+        specifier: ^4.0.4
+        version: 4.0.4
       '@tailwindcss/vite':
         specifier: ^4.2.2
         version: 4.2.2(vite@7.3.3(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.4))
@@ -3237,6 +3240,10 @@ packages:
         optional: true
       svelte:
         optional: true
+
+  '@sanity/webhook@4.0.4':
+    resolution: {integrity: sha512-c8LmzR5Wx93zJ10ohhp0XlmPrTNSFyvPcLbNY/sN45Wj5VOngz4FbBMbX9j64sSQLt+676U6OhiVfjs1yw3YCw==}
+    engines: {node: '>=20.0.0'}
 
   '@sanity/worker-channels@2.0.0':
     resolution: {integrity: sha512-mC+8yPQuw2rHXdHigFPU9thNa6vTaPmh7jFR6RvloE8s+6dmnk9bHdPXRbrrUqafxzK3L9aH2E170ubXyxcAIA==}
@@ -12481,6 +12488,8 @@ snapshots:
       - '@sanity/types'
       - react-is
       - typescript
+
+  '@sanity/webhook@4.0.4': {}
 
   '@sanity/worker-channels@2.0.0': {}
 

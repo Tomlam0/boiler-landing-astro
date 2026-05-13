@@ -20,7 +20,7 @@ export function ContactForm() {
     const formData = new FormData(event.currentTarget);
 
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch('/api/contact/submit', {
         method: 'POST',
         body: formData,
       });

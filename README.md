@@ -9,8 +9,10 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Shadcn/ui](https://img.shields.io/badge/shadcn/ui-8A2BE2?style=for-the-badge&2F&logo=shadcnui&color=131316)
+![Sanity](https://img.shields.io/badge/Sanity-F03E2F?style=for-the-badge&logo=sanity&logoColor=white)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
 
-A modern Astro application with React islands, TypeScript, Tailwind CSS, and Shadcn/ui components.
+A modern Astro application with React islands, **Sanity Studio CMS** (deployed standalone with Visual Editing + draft preview), Tailwind CSS, and Shadcn/ui. Deployed to **Cloudflare Workers** via `@astrojs/cloudflare` with edge-cached HTML and tag-based revalidation on publish.
 
 </div>
 
@@ -36,6 +38,10 @@ A modern Astro application with React islands, TypeScript, Tailwind CSS, and Sha
 - [💿 Project Usage](#project-usage)
   - [Component Architecture](#component-architecture)
 
+  - [Sanity Studio & Visual Editing](#sanity-studio--visual-editing)
+
+  - [Cache Strategy](#cache-strategy)
+
 - [🔐 Security Monitoring](#security-monitoring)
 
 - [💰 Cloudflare Budget Management](#cloudflare-budget-management)
@@ -48,13 +54,12 @@ A modern Astro application with React islands, TypeScript, Tailwind CSS, and Sha
 
 ## Prerequisites
 
-Before setting up the project, ensure you have the following:
+To run the project locally:
 
-- Node.js (using `nvm`):
-  - Minimum required version: 24.x (LTS)
-  - `nvm use` to use the project's version
-- pnpm (package manager)
-- Wrangler CLI (installed via devDependencies, used for Cloudflare deployment)
+- **nvm** — installs and switches Node versions. Run `nvm use` in the project root to pick up the version pinned in `.nvmrc`.
+- **Corepack enabled** — run `corepack enable` once on your machine. It reads the `packageManager` field in `package.json` and ensures everyone uses the same pinned `pnpm` version (no global install needed).
+- **Sanity.io account** with access to your project (for dataset access in local dev).
+- **Cloudflare account** for the deployment target (free Workers plan is enough).
 
 # 🏗️
 
@@ -70,14 +75,33 @@ Before setting up the project, ensure you have the following:
 │   ├── layouts/                      # Astro layout components.
 │   │   ├── base-layout.astro
 │   │   └── public-layout.astro
+│   ├── middleware.ts                 # Cache-Control + Vary: Cookie for edge caching.
 │   ├── pages/                        # File-based routing.
+│   │   ├── api/
+│   │   │   ├── contact/submit.ts     # Contact form endpoint.
+│   │   │   ├── draft-mode/           # Sanity Presentation draft flow.
+│   │   │   │   ├── enable.ts
+│   │   │   │   ├── disable.ts
+│   │   │   │   └── check.ts          # Polling endpoint for SanityLive.
+│   │   │   └── revalidate/purge.ts   # Sanity webhook → Cloudflare cache purge.
+│   │   ├── blog/                     # Blog list + article pages.
+│   │   ├── contact/
 │   │   ├── mentions-legales/
 │   │   ├── 404.astro
 │   │   ├── index.astro
 │   │   └── robots.txt.ts
 │   ├── features/                     # Feature modules — components, data co-located.
-│   │   ├── landing/components/
-│   │   └── legal/data/
+│   │   ├── blog/
+│   │   ├── contact/
+│   │   ├── landing/
+│   │   └── legal/
+│   ├── sanity/                       # All Sanity-related code, grouped by concern.
+│   │   ├── clients/                  # client (public) + backend-client (server-only, with token).
+│   │   ├── content/                  # load-query, fragments, image, settings, cache-tags.
+│   │   ├── preview/                  # Draft mode + Visual Editing islands & helpers.
+│   │   ├── studio/                   # Custom Studio components used inside schemas.
+│   │   ├── presentation/             # Presentation tool resolve.
+│   │   └── schemas/                  # Doc schemas with co-located GROQ queries.
 │   ├── shared/                       # Cross-cutting concerns.
 │   │   ├── components/
 │   │   │   ├── layout/               # Nav, Footer.
@@ -88,10 +112,12 @@ Before setting up the project, ensure you have the following:
 │   │   ├── lib/                      # env, seo/, utils.
 │   │   └── types/
 │   └── styles/                       # Global CSS, design tokens.
+├── sanity.config.ts                  # Studio config — staging/production/local workspaces.
+├── sanity.cli.ts                     # Studio bundler config (env injection).
 └── public/                           # Static assets (favicon, OG images).
 ```
 
-This project uses a **Feature-Driven Architecture** where each feature owns its logic. `shared/` contains only reusables used by ≥2 features.
+This project uses a **Feature-Driven Architecture** where each feature owns its logic. `shared/` contains only reusables used by ≥2 features. `sanity/` holds the CMS layer (schemas, queries, client setup) consumed by pages.
 
 ## Scripts
 
@@ -104,7 +130,9 @@ This project uses a **Feature-Driven Architecture** where each feature owns its 
 ### Development
 
 ```bash
-pnpm dev              # Start the development server
+pnpm dev              # Astro (:4321) + Sanity Studio (:3333) in parallel via concurrently
+pnpm dev:astro        # Astro only
+pnpm dev:sanity       # Sanity Studio only
 pnpm build            # Build the application for production
 pnpm preview          # Preview the production build
 ```
@@ -118,6 +146,14 @@ pnpm lint:fix         # Fix linting errors
 pnpm format           # Format code with Prettier
 pnpm format:check     # Check if code is formatted
 pnpm knip             # Analyze unused exports and dependencies
+```
+
+### Sanity
+
+```bash
+pnpm typegen                  # Regenerate src/sanity/sanity.types.ts after schema changes
+pnpm deploy:sanity:staging    # Deploy the staging Studio to <slug>-staging.sanity.studio
+pnpm deploy:sanity:prod       # Deploy the production Studio to <slug>.sanity.studio
 ```
 
 ### Git & Commit
@@ -181,15 +217,13 @@ cd project
 pnpm i
 ```
 
-3. Create env files (if needed)
-
-Create the env files for development:
+3. Create `.env.local` from `.env.example`:
 
 ```bash
-.env.local
+cp .env.example .env.local
 ```
 
-The application may require environment variables defined in a `.env.example` file if present.
+At minimum you'll need `SANITY_PROJECT_ID`, `SANITY_DATASET`, `SITE_URL`, and `SANITY_API_READ_TOKEN` (for draft preview). See [`BOILERPLATE-SETUP.md`](./BOILERPLATE-SETUP.md) for the full env + GitHub secrets reference and the Sanity / Cloudflare account setup walkthrough.
 
 ## Quick Start
 
@@ -234,6 +268,40 @@ This project follows a modular component architecture with clear separation of c
 - **Static by default**: Pages are `.astro` files with zero client JS
 - **React islands**: Interactive components use `client:load`, `client:visible`, or `client:idle`
 - **CVA in templates**: Use `buttonVariants()` directly in Astro templates instead of `<Button asChild>`
+
+## Sanity Studio & Visual Editing
+
+<div align="right">
+
+[⬆️ Back to Top](#readme-top)
+
+</div>
+
+Sanity drives the content layer. The Studio is deployed standalone on `<slug>.sanity.studio` with three workspaces gated by `STUDIO_TARGET`:
+
+- **staging** → production dataset, **publish actions stripped** so editors can only preview/discard. Used for client recette before going live.
+- **production** → production dataset, full publish rights.
+- **local** → development dataset, available via `pnpm dev:sanity` on `:3333`.
+
+The Visual Editing + draft mode setup follows the [official Sanity Astro guide](https://www.sanity.io/docs/visual-editing/astro-visual-editing): a perspective cookie validated by `/api/draft-mode/enable` switches `loadQuery` to draft perspective, mounts client-only React islands (`<SanityVisualEditing>`, `<SanityLive>`, `<DisableDraftMode>`), and refreshes the iframe via `postMessage` or a server-polled endpoint for standalone tabs.
+
+Visitors without the cookie pay **zero JS overhead** — the entire preview stack is `client:only` and gated by the layout.
+
+## Cache Strategy
+
+<div align="right">
+
+[⬆️ Back to Top](#readme-top)
+
+</div>
+
+Public pages are SSR'd through Cloudflare Workers, then edge-cached with `Cache-Control: public, s-maxage=60, stale-while-revalidate=300` so the typical TTFB is ~10-30ms once warm.
+
+Each page stamps its responses with `Cache-Tag` headers (e.g. `homepage`, `blog`, `article-<id>`, `settings`). When an editor publishes in Sanity, a webhook hits `/api/revalidate/purge`, which validates the signature and calls Cloudflare's REST API to **globally purge** the affected tags across all 300+ POPs in seconds.
+
+Without the webhook (e.g. on the Sanity free plan where you might want the 2 webhook slots used elsewhere), the 60s TTL is the fallback — content auto-refreshes within a minute of publish.
+
+See [`src/middleware.ts`](./src/middleware.ts), [`src/sanity/content/cache-tags.ts`](./src/sanity/content/cache-tags.ts), and [`src/pages/api/revalidate/purge.ts`](./src/pages/api/revalidate/purge.ts).
 
 ## Security Monitoring
 

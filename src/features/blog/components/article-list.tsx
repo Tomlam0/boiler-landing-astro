@@ -1,6 +1,6 @@
 import { MotionPreset } from '@/shared/components/services/motion-preset';
 
-import { urlFor } from '@/sanity/lib/image';
+import { urlFor } from '@/sanity/content/image';
 import type { ARTICLES_QUERY_RESULT } from '@/sanity/sanity.types';
 
 interface ArticleListProps {
