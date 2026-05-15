@@ -51,7 +51,13 @@ export async function loadQuery<QueryResponse>({
         resultSourceMap: draftMode ? 'withKeyArraySelector' : false,
         stega: draftMode,
         ...(draftMode ? { token } : {}),
-        useCdn: !draftMode && !import.meta.env.DEV,
+        // Always bypass Sanity's CDN: the build runs right after a publish
+        // webhook, and the CDN can still be serving up to ~60s of stale data.
+        // Different queries have independent cache keys, so a single build
+        // could mix old + new content (e.g., blog list page shows old title
+        // while article detail shows new title). Querying live guarantees
+        // every page is built from the same fresh snapshot.
+        useCdn: false,
       }
     );
 
