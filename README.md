@@ -79,11 +79,10 @@ To run the project locally:
 │   ├── pages/                        # File-based routing.
 │   │   ├── api/
 │   │   │   ├── contact/submit.ts     # Contact form endpoint.
-│   │   │   ├── draft-mode/           # Sanity Presentation draft flow.
-│   │   │   │   ├── enable.ts
-│   │   │   │   ├── disable.ts
-│   │   │   │   └── check.ts          # Polling endpoint for SanityLive.
-│   │   │   └── revalidate/purge.ts   # Sanity webhook → Cloudflare cache purge.
+│   │   │   └── draft-mode/           # Sanity Presentation draft flow.
+│   │   │       ├── enable.ts
+│   │   │       ├── disable.ts
+│   │   │       └── check.ts          # Polling endpoint for SanityLive.
 │   │   ├── blog/                     # Blog list + article pages.
 │   │   ├── contact/
 │   │   ├── mentions-legales/
@@ -97,7 +96,7 @@ To run the project locally:
 │   │   └── legal/
 │   ├── sanity/                       # All Sanity-related code, grouped by concern.
 │   │   ├── clients/                  # client (public) + backend-client (server-only, with token).
-│   │   ├── content/                  # load-query, fragments, image, settings, cache-tags.
+│   │   ├── content/                  # load-query, fragments, image, settings.
 │   │   ├── preview/                  # Draft mode + Visual Editing islands & helpers.
 │   │   ├── studio/                   # Custom Studio components used inside schemas.
 │   │   ├── presentation/             # Presentation tool resolve.
@@ -287,7 +286,7 @@ The Visual Editing + draft mode setup follows the [official Sanity Astro guide](
 
 Visitors without the cookie pay **zero JS overhead** — the entire preview stack is `client:only` and gated by the layout.
 
-## Cache Strategy
+## Rendering Strategy
 
 <div align="right">
 
@@ -295,13 +294,28 @@ Visitors without the cookie pay **zero JS overhead** — the entire preview stac
 
 </div>
 
-Public pages are SSR'd through Cloudflare Workers, then edge-cached with `Cache-Control: public, s-maxage=60, stale-while-revalidate=300` so the typical TTFB is ~10-30ms once warm.
+Two builds from the same codebase, deployed to two Cloudflare Workers:
 
-Each page stamps its responses with `Cache-Tag` headers (e.g. `homepage`, `blog`, `article-<id>`, `settings`). When an editor publishes in Sanity, a webhook hits `/api/revalidate/purge`, which validates the signature and calls Cloudflare's REST API to **globally purge** the affected tags across all 300+ POPs in seconds.
+| | Staging (`landing-astro-staging`) | Production (`landing-astro`) |
+|---|---|---|
+| Public pages | **SSR** — cookie read per request, draft mode active | **Prerendered** to static HTML at build time |
+| API routes | SSR (always) | SSR (always — contact form, etc.) |
+| Visual Editing iframe target | ✅ This is what Sanity Presentation loads | ❌ No draft mode capability |
+| TTFB visitor | ~10-30ms (SSR + cache) | **~5ms** (static HTML served from CF edge assets) |
+| Triggered by | Push to `staging` branch | Push to `main` branch + Sanity publish webhook |
 
-Without the webhook (e.g. on the Sanity free plan where you might want the 2 webhook slots used elsewhere), the 60s TTL is the fallback — content auto-refreshes within a minute of publish.
+**The same `.astro` page files serve both modes.** Each public page declares `export const prerender = true;` (the prod default). The staging CI runs a `sed` substitution before `astro build` to flip those literals to `false`, which puts the page into SSR mode so the draft cookie can be read. API routes always declare `prerender = false` and stay dynamic in both deployments.
 
-See [`src/middleware.ts`](./src/middleware.ts), [`src/sanity/content/cache-tags.ts`](./src/sanity/content/cache-tags.ts), and [`src/pages/api/revalidate/purge.ts`](./src/pages/api/revalidate/purge.ts).
+**Publish flow:**
+
+1. Editor edits in the production Studio (`<slug>.sanity.studio`)
+2. Presentation iframe loads the **staging** URL with a draft cookie → live drafts visible, Visual Editing overlays active
+3. Click Publish → mutation lands in the `production` dataset
+4. Sanity webhook hits `https://landing-astro-staging.../api/sanity-rebuild` (on the staging Worker since prod is static)
+5. That endpoint validates the HMAC signature, then calls the GitHub API to trigger a `repository_dispatch` event
+6. The `Deploy Production` workflow re-runs, rebuilds the static HTML with the new content, and redeploys (~60-90s total)
+
+See [`src/middleware.ts`](./src/middleware.ts), [`src/pages/api/sanity-rebuild.ts`](./src/pages/api/sanity-rebuild.ts), and [`.github/workflows/deploy-production.yml`](./.github/workflows/deploy-production.yml).
 
 ## Security Monitoring
 

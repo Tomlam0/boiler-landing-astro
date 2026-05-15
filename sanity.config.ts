@@ -21,8 +21,11 @@ function ensureUrl(value: string | undefined, key: string): string {
   return value;
 }
 
+// Production runs as pure static HTML — it has no SSR, no draft cookies, no
+// Visual Editing. So BOTH workspaces (staging + production) point their
+// Presentation iframe at the staging URL, which is the SSR-enabled mirror
+// where editors can preview drafts live before publishing.
 const STAGING_URL = import.meta.env.SITE_URL_STAGING;
-const PRODUCTION_URL = import.meta.env.SITE_URL_PRODUCTION;
 const LOCAL_URL = import.meta.env.SITE_URL;
 
 const previewModeRoutes = {
@@ -76,10 +79,9 @@ const productionWorkspace = () => ({
   title: 'Production',
   basePath: '/',
   dataset: 'production',
-  plugins: [
-    ...sharedPlugins,
-    presentationFor(ensureUrl(PRODUCTION_URL, 'SITE_URL_PRODUCTION')),
-  ],
+  // Presentation points at the staging SSR mirror — prod itself is static HTML
+  // with no draft-mode capability, so previews always happen on staging.
+  plugins: [...sharedPlugins, presentationFor(ensureUrl(STAGING_URL, 'SITE_URL_STAGING'))],
 });
 
 const localWorkspace = () => ({

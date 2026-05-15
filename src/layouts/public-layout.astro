@@ -5,7 +5,6 @@ import Footer from '@/shared/components/layout/footer';
 import SanityVisualEditing from '@/sanity/preview/sanity-visual-editing';
 import SanityLive from '@/sanity/preview/sanity-live';
 import DisableDraftMode from '@/sanity/preview/disable-draft-mode';
-import { addCacheTags } from '@/sanity/content/cache-tags';
 import { getSettings } from '@/sanity/content/settings';
 import { getDraftModeProps } from '@/sanity/preview/draft-mode';
 import type { SeoMetadata } from '@/shared/lib/seo/metadata';
@@ -23,9 +22,6 @@ interface Props {
 const { metadata, breadcrumbs } = Astro.props;
 const { perspectiveCookie } = getDraftModeProps(Astro.cookies);
 const draftMode = perspectiveCookie !== undefined;
-
-// this layout must be invalidated when settings change.
-addCacheTags(Astro.response, 'settings');
 
 const settings = await getSettings();
 ---
