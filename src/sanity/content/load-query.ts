@@ -1,7 +1,6 @@
 import type { ClientPerspective, QueryParams } from '@sanity/client';
 import { sanityClient } from 'sanity:client';
-
-const token = import.meta.env.SANITY_API_READ_TOKEN;
+import { env } from 'cloudflare:workers';
 
 function parsePerspective(raw: string | undefined): ClientPerspective | undefined {
   if (!raw) return undefined;
@@ -27,6 +26,10 @@ export async function loadQuery<QueryResponse>({
   perspectiveCookie?: string | undefined;
 }) {
   const draftMode = perspectiveCookie ? true : false;
+  // Read the token at call time from Worker runtime bindings (not at module
+  // load — `import.meta.env` resolves to undefined at build time for secrets
+  // that aren't injected into the Vite build environment).
+  const token = draftMode ? env.SANITY_API_READ_TOKEN : undefined;
 
   if (draftMode && !token) {
     throw new Error(
