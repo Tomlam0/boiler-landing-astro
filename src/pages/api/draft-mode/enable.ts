@@ -2,11 +2,14 @@ import type { APIRoute } from 'astro';
 import { validatePreviewUrl } from '@sanity/preview-url-secret';
 import { perspectiveCookieName } from '@sanity/preview-url-secret/constants';
 import { sanityClient } from 'sanity:client';
+import { env } from 'cloudflare:workers';
 
 export const prerender = false;
 
 export const GET: APIRoute = async ({ request, cookies, redirect }) => {
-  const token = import.meta.env.SANITY_API_READ_TOKEN;
+  // Worker secrets are runtime bindings — read via `cloudflare:workers`, not
+  // `import.meta.env` (which is build-time only and resolves to `undefined`).
+  const token = env.SANITY_API_READ_TOKEN;
   if (!token) {
     return new Response('Server misconfigured: missing read token', { status: 500 });
   }

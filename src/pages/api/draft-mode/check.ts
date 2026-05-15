@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { perspectiveCookieName } from '@sanity/preview-url-secret/constants';
 
-import { backendClient } from '@/sanity/clients/backend-client';
+import { createBackendClient } from '@/sanity/clients/backend-client';
 
 export const prerender = false;
 
@@ -13,7 +13,7 @@ export const GET: APIRoute = async ({ cookies }) => {
   }
 
   try {
-    const result = await backendClient.fetch<{ _updatedAt: string } | null>(
+    const result = await createBackendClient().fetch<{ _updatedAt: string } | null>(
       '*[!(_id in path("system.**"))] | order(_updatedAt desc)[0]{ _updatedAt }'
     );
     return new Response(JSON.stringify({ latestMutation: result?._updatedAt ?? null }), {

@@ -88,7 +88,7 @@ export default [
       'import/prefer-default-export': 'off',
       'import/no-unresolved': [
         'warn',
-        { caseSensitive: false, ignore: ['astro:*', 'sanity:*'] },
+        { caseSensitive: false, ignore: ['astro:*', 'sanity:*', 'cloudflare:*'] },
       ],
       'import/extensions': [
         'error',

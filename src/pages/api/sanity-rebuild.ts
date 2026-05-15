@@ -1,15 +1,20 @@
 import type { APIRoute } from 'astro';
 import { isValidSignature, SIGNATURE_HEADER_NAME } from '@sanity/webhook';
+import { env } from 'cloudflare:workers';
 
 export const prerender = false;
 
 // Sanity webhook → GitHub repository_dispatch → triggers prod rebuild.
 // Lives on the staging Worker (the only env with SSR) so the GitHub token
 // stays in Worker secrets — never exposed to Sanity's webhook config.
+//
+// Worker secrets must be read via `cloudflare:workers` import at runtime —
+// `import.meta.env.*` is replaced at build time by Vite and resolves to
+// `undefined` for secrets that aren't injected into the build environment.
 export const POST: APIRoute = async ({ request }) => {
-  const webhookSecret = import.meta.env.SANITY_REVALIDATE_SECRET;
-  const githubToken = import.meta.env.REPO_DISPATCH_TOKEN;
-  const repo = import.meta.env.GITHUB_REPO;
+  const webhookSecret = env.SANITY_REVALIDATE_SECRET;
+  const githubToken = env.REPO_DISPATCH_TOKEN;
+  const repo = env.GITHUB_REPO;
 
   if (!webhookSecret || !githubToken || !repo) {
     return new Response('Server misconfigured', { status: 500 });
