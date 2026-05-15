@@ -63,13 +63,11 @@ The first step is to create a new email address with ProtonMail and use it to cr
 
 ## Hosting and CI/CD Setup
 
-### Vercel Hosting
+### Cloudflare Workers Hosting
 
-![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
 
-Create a new account on Vercel.
-
-This step will need the phone number from your client, which should be active to send you back the verification codes
+Create a new account on Cloudflare.
 
 <div align="right">
 
@@ -77,34 +75,27 @@ This step will need the phone number from your client, which should be active to
 
 </div>
 
-To log in to the Vercel account and push your project, follow these steps:
+The site is deployed to **Cloudflare Workers Static Assets** via the [`@astrojs/cloudflare`](https://docs.astro.build/en/guides/integrations-guide/cloudflare/) adapter. Configuration lives in [`wrangler.jsonc`](./wrangler.jsonc) at the repo root.
 
-1. **Log in to Vercel using the CLI:**
+To log in locally and run a one-off deployment:
 
-   Open your terminal and run (follow the steps):
+1. **Log in to Cloudflare using Wrangler:**
 
    ```bash
-   vercel login
+   pnpm exec wrangler login
    ```
 
-   Once you're logged into your Vercel account, you can deploy it by running:
+2. **Deploy manually (optional):**
 
    ```bash
-   vercel --prod
+   pnpm build
+   pnpm exec wrangler deploy --name boiler-landing-astro
    ```
 
 This section is only needed for the **initial project setup**.
-After connecting your project to the Vercel account, thanks to the `GitHub Actions`, deployments will be automatic.
+After connecting your project to Cloudflare, thanks to the `GitHub Actions`, deployments will be automatic on push to `staging` (→ `boiler-landing-astro-staging`) and `main` (→ `boiler-landing-astro`).
 
-You can now go to `Vercel project settings` > `Functions` > `Advanced Settings` > `Europe Region`
-
-Then `Vercel project settings` > `Environments` and add the same domain than your production with the prefix `staging-` but for the `Preview` environment.
-
-**Note:** For client acceptance testing, you may need to disable `Vercel Authentication` in your project settings under `Deployment Protection` to allow external access to preview deployments without requiring a Vercel account.
-
-This will ensure that the push from the `staging` branch will be deployed to the `preview` environment for acceptance testing, where Vercel will deploy the staging changes to the preview domain.
-
-To avoid multiple Vercel deployments in other branches, you need to go to `Vercel project settings` > `Git` > `Ignored Build Step` > `Run My Bash script` then paste `bash ignore-build.sh`.
+To attach a custom domain, go to **Cloudflare Dashboard → Workers & Pages → your worker → Settings → Domains & Routes**.
 
 ### GitHub Actions Workflow
 
@@ -117,30 +108,46 @@ To avoid multiple Vercel deployments in other branches, you need to go to `Verce
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 
 To securely manage sensitive information, we use GitHub Secrets to store environment variables.
-The following environment variables are required for the Vercel deployment:
+The following secrets are required for the Cloudflare deployment:
 
-- `VERCEL_ORG_ID`: Your Vercel organization ID.
-- `VERCEL_PROJECT_ID`: Your Vercel project ID.
-- `VERCEL_TOKEN`: Your Vercel authentication token.
+- `CLOUDFLARE_API_TOKEN`: Cloudflare API token with **Edit Workers** permissions.
+- `CLOUDFLARE_ACCOUNT_ID`: Your Cloudflare account ID.
 
-You can obtain `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` in the `.vercel/project.json` file (if this project is loged to Vercel).
+The following GitHub **variables** (not secrets) are also used:
 
-To retrieve the `VERCEL_TOKEN`, follow these steps:
+- `SITE_URL`: Production site URL (e.g. `https://example.com`).
+- `SITE_URL_STAGING`: Staging site URL (e.g. `https://staging.example.com`).
 
-1. Log in to your Vercel account.
-2. Navigate to the [Vercel Tokens](https://vercel.com/account/tokens) page.
-3. Name the token `GitHub Actions Deployment`, give project's scope and never expire.
-4. Click `Create`.
+To create the API token:
 
-#### Adding Secrets to GitHub
+1. Log in to your Cloudflare account.
+2. Navigate to [User Profile → API Tokens](https://dash.cloudflare.com/profile/api-tokens).
+3. Click **Create Token** → use the **Edit Cloudflare Workers** template.
+4. Restrict the token to your account and zone, then click **Create Token**.
+
+To retrieve the account ID: in the Cloudflare dashboard, the account ID is shown in the right sidebar of the **Workers & Pages** overview page.
+
+#### Adding Secrets and Variables to GitHub
 
 1. Navigate to your GitHub repository.
 2. Click on **Settings**.
-3. In the **Secrets and variables** section, select **Actions** and **Secrets**.
-4. Click **New repository secret**.
-5. Add the following secrets:
-   - `VERCEL_ORG_ID`
-   - `VERCEL_PROJECT_ID`
-   - `VERCEL_TOKEN`
+3. In the **Secrets and variables** section, select **Actions**.
+4. Under the **Secrets** tab, click **New repository secret** and add:
+   - `CLOUDFLARE_API_TOKEN`
+   - `CLOUDFLARE_ACCOUNT_ID`
+5. Under the **Variables** tab, click **New repository variable** and add:
+   - `SITE_URL`
+   - `SITE_URL_STAGING`
+
+## 🔐 Before going live — Security reminder
+
+Once the project is delivered or goes to production, make sure 2FA is enabled on the critical accounts:
+
+- **Master email** (ProtonMail / Google) — recovery vector for everything else
+- **Domain registrar** (OVH, Namecheap…) — a compromised registrar = full DNS takeover
+- **DNS / Hosting** — Cloudflare
+- **Code** — GitHub
+
+Prefer passkey or TOTP (authenticator app) over SMS. Store recovery codes offline.
 
 ## All is setup ! You can now delete this file and start coding 😎

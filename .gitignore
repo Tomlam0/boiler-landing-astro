@@ -11,6 +11,9 @@
 /.astro/
 /dist/
 
+# cloudflare / wrangler
+.wrangler/
+
 # production
 /build
 
@@ -37,3 +40,7 @@ yarn-error.log*
 # IDE settings
 .vscode/
 .cursor/
+
+# IA
+.claude/*
+!.claude/settings.json

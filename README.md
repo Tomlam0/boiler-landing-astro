@@ -38,7 +38,7 @@ A modern Astro application with React islands, TypeScript, Tailwind CSS, and Sha
 
 - [🔐 Security Monitoring](#security-monitoring)
 
-- [💰 Vercel Budget Management](#vercel-budget-management)
+- [💰 Cloudflare Budget Management](#cloudflare-budget-management)
 
 - [🤝 Contributing](#contributing)
 
@@ -54,7 +54,7 @@ Before setting up the project, ensure you have the following:
   - Minimum required version: 24.x (LTS)
   - `nvm use` to use the project's version
 - pnpm (package manager)
-- Vercel CLI installed locally (optional, for deployment)
+- Wrangler CLI (installed via devDependencies, used for Cloudflare deployment)
 
 # 🏗️
 
@@ -273,9 +273,9 @@ This configuration allows you to review security vulnerabilities at your own pac
 
 > **Note**: The `.github/dependabot.yml` file is already configured with `open-pull-requests-limit: 0` for monitoring-only behavior.
 
-## Vercel Budget Management
+## Cloudflare Budget Management
 
-![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
 
 <div align="right">
 
@@ -283,31 +283,28 @@ This configuration allows you to review security vulnerabilities at your own pac
 
 </div>
 
-### Current Spend Configuration
+### Workers Free Tier
 
-- **Soft Limit**: $20/month (email alerts to project maintainers)
-- **Hard Limit**: $50/month (automatic deployment suspension)
+The landing is deployed to **Cloudflare Workers Static Assets**. The free tier covers most small to medium projects:
 
-> **Note**: Most small to medium projects will remain within Vercel's free tier limits.These settings serve as a safety net for unexpected traffic spikes or misconfigured functions.
+- **100,000 requests/day** to the Worker (static asset requests served from the CDN do not count)
+- **10ms CPU time per request** (largely irrelevant for prerendered pages)
+
+> **Note**: Pages are prerendered at build time and served from Cloudflare's global CDN, so traffic on static routes does not consume Worker quota.
 
 #### 🚨 **Budget Exceeded Protocol**
 
-If spend limits are approached:
+If quotas are approached:
 
-1. **Check Vercel Analytics** - Identify traffic spikes or unusual usage patterns
-2. **Review Function Logs** - Look for inefficient or runaway serverless functions
-3. **Optimize Performance** - Implement caching, reduce API calls, optimize images
+1. **Check Cloudflare Analytics** - Identify traffic spikes or unusual usage patterns
+2. **Review Worker Logs** (`wrangler tail`) - Look for unexpected dynamic invocations
+3. **Optimize Performance** - Implement caching, reduce dynamic routes, optimize images
 
-#### ⚙️ **Configuring Spend Limits**
+#### ⚙️ **Monitoring Usage**
 
-To replicate this setup on a new Vercel project:
-
-1. Navigate to **Project Settings** → **Usage & Billing**
-2. Set **Spending Limit** to $50
-3. Configure **Usage Alerts** at $20 threshold
-4. Add team member emails for notifications
-
-> **Note**: These limits help maintain cost control during development. Production deployments may require adjusted thresholds based on actual usage patterns.
+1. Navigate to **Cloudflare Dashboard** → **Workers & Pages** → your Worker
+2. Review the **Metrics** tab for request volume and CPU time
+3. Configure **Notifications** under Account → Notifications for usage alerts
 
 ## Contributing
 
