@@ -51,4 +51,5 @@ jobs:
           # Dedicated token with the `sanity.project.deployStudio` grant
           # (the regular SANITY_API_TOKEN only has data read/write rights)
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_DEPLOY_STUDIO_TOKEN }}
+          SITE_URL_STAGING: ${{ vars.SITE_URL_STAGING }}
         run: pnpm deploy:sanity:staging

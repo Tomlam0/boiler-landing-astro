@@ -49,4 +49,5 @@ jobs:
       - name: Deploy Sanity Studio (production)
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_DEPLOY_STUDIO_TOKEN }}
+          SITE_URL_PRODUCTION: ${{ vars.SITE_URL }}
         run: pnpm deploy:sanity:prod
