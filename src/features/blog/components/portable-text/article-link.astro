@@ -1,0 +1,38 @@
+---
+interface Props {
+  node: {
+    markDef: {
+      href?: string;
+      openInNewTab?: boolean;
+    };
+  };
+}
+
+const { node } = Astro.props;
+const href = node.markDef.href ?? '#';
+const openInNewTab = node.markDef.openInNewTab ?? true;
+---
+
+{
+  openInNewTab ? (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      draggable="false"
+      class="text-accent underline decoration-accent/40 underline-offset-4 transition-colors
+        duration-200 hover:decoration-accent"
+    >
+      <slot />
+    </a>
+  ) : (
+    <a
+      href={href}
+      draggable="false"
+      class="text-accent underline decoration-accent/40 underline-offset-4 transition-colors
+        duration-200 hover:decoration-accent"
+    >
+      <slot />
+    </a>
+  )
+}

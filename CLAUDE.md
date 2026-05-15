@@ -84,12 +84,24 @@ Rules:
 
 ## Scripts
 ```bash
-pnpm dev       # Astro dev server
-pnpm build     # Production build
-pnpm preview   # Preview production build
-pnpm ts        # Astro check + TypeScript check (no emit)
-pnpm lint      # ESLint (flat config, only-warn)
-pnpm lint:fix  # ESLint autofix
-pnpm format    # Prettier write
-pnpm knip      # Dead code detection
+pnpm dev          # Astro (:4321) + Sanity Studio (:3333) in parallel via concurrently
+pnpm dev:astro    # Astro only
+pnpm dev:sanity   # Sanity Studio only
+pnpm build        # Production build
+pnpm preview      # Preview production build
+pnpm ts           # Astro check + TypeScript check (no emit)
+pnpm lint         # ESLint (flat config, only-warn)
+pnpm lint:fix     # ESLint autofix
+pnpm format       # Prettier write
+pnpm knip         # Dead code detection
+pnpm typegen      # Regenerate src/sanity/sanity.types.ts after schema changes
+pnpm deploy:sanity:staging  # Deploy Sanity Studio to <slug>-staging.sanity.studio (CI usually does this)
+pnpm deploy:sanity:prod     # Deploy Sanity Studio to <slug>.sanity.studio (CI usually does this)
 ```
+
+## Sanity Studio (standalone)
+Three workspaces selected via `STUDIO_TARGET`:
+- `staging` — points at the `production` dataset, mutating actions stripped (preview-only)
+- `production` — full read/write on `production` dataset
+- `local` (default in `sanity dev`) — `development` dataset, vision tool enabled
+The Studio is **not** embedded in the Astro app (no `/studio` route). It's deployed standalone to `<slug>.sanity.studio` via `pnpm deploy:sanity:*` (run by the deploy workflows).

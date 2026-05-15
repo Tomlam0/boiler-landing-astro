@@ -1,64 +1,107 @@
 ---
-import PublicLayout from '@/layouts/public-layout.astro';
-import { marketingMetadata } from '@/shared/lib/seo/metadata';
-import { env } from '@/shared/lib/env';
-import { termsAndPrivacySections, termsAndPrivacyConfig } from '@/features/legal/data/terms-data';
+import type { PortableTextBlock } from '@portabletext/types';
 
-const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocaleDateString(
-  'fr-FR',
+import PublicLayout from '@/layouts/public-layout.astro';
+import LegalContent from '@/shared/components/portable-text/legal-content.astro';
+import { resolveMetadata } from '@/shared/lib/seo/metadata';
+import { env } from '@/shared/lib/env';
+import { addCacheTags } from '@/sanity/content/cache-tags';
+import { getDraftModeProps } from '@/sanity/preview/draft-mode';
+import { loadQuery } from '@/sanity/content/load-query';
+import { LEGAL_QUERY } from '@/sanity/schemas/documents/legal/legal.queries';
+import type { LEGAL_QUERY_RESULT } from '@/sanity/sanity.types';
+
+addCacheTags(Astro.response, 'legal');
+
+const { perspectiveCookie } = getDraftModeProps(Astro.cookies);
+const { data: legal } = await loadQuery<LEGAL_QUERY_RESULT>({
+  query: LEGAL_QUERY,
+  perspectiveCookie,
+});
+
+const metadata = await resolveMetadata({
+  title: legal?.seoTitle ?? 'Mentions légales — Projet',
+  description:
+    legal?.seoDescription ??
+    "Politique de confidentialité, conditions générales d'utilisation et politique de cookies.",
+  path: 'mentions-legales',
+  siteName: 'Projet',
+});
+
+const sections = [
   {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }
-);
+    id: 'privacy-policy',
+    title: 'Politique de confidentialité',
+    content: legal?.privacyPolicy as PortableTextBlock[] | undefined,
+  },
+  {
+    id: 'terms-and-conditions',
+    title: "Conditions générales d'utilisation",
+    content: legal?.termsAndConditions as PortableTextBlock[] | undefined,
+  },
+  {
+    id: 'cookie-policy',
+    title: 'Politique de cookies',
+    content: legal?.cookiePolicy as PortableTextBlock[] | undefined,
+  },
+].filter((section) => section.content && section.content.length > 0);
+
+const lastUpdated = legal?.lastUpdated
+  ? new Date(legal.lastUpdated).toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : null;
 ---
 
 <PublicLayout
-  metadata={marketingMetadata.terms}
+  metadata={metadata}
   breadcrumbs={[
     { name: 'Accueil', url: env.SITE_URL },
     { name: 'Mentions légales', url: `${env.SITE_URL}mentions-legales` },
   ]}
 >
-  <div class="flex min-h-screen flex-col">
-    <main class="flex-1 px-4 pt-36 pb-16 select-text">
-      <div class="mx-auto max-w-7xl">
-        <div class="mb-8">
-          <a
-            href="/"
-            draggable="false"
-            class="mb-6 inline-flex h-8 items-center gap-2 rounded-md px-3 text-xs font-medium
-              transition-colors hover:bg-muted hover:text-foreground"
+  <main class="flex min-h-screen flex-col select-text">
+    <div class="mx-auto w-full max-w-7xl px-4 py-16">
+      <div class="mb-8">
+        <a
+          href="/"
+          draggable="false"
+          class="mb-6 inline-flex h-8 items-center gap-2 rounded-md px-3 text-xs font-medium
+            transition-colors hover:bg-muted hover:text-foreground"
+        >
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            class="mr-2 h-4 w-4"
           >
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 15 15"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              class="mr-2 h-4 w-4"
-            >
-              <path
-                d="M6.85355 3.14645C7.04882 3.34171 7.04882 3.65829 6.85355 3.85355L3.70711 7H12.5C12.7761 7 13 7.22386 13 7.5C13 7.77614 12.7761 8 12.5 8H3.70711L6.85355 11.1464C7.04882 11.3417 7.04882 11.6583 6.85355 11.8536C6.65829 12.0488 6.34171 12.0488 6.14645 11.8536L2.14645 7.85355C1.95118 7.65829 1.95118 7.34171 2.14645 7.14645L6.14645 3.14645C6.34171 2.95118 6.65829 2.95118 6.85355 3.14645Z"
-                fill="currentColor"
-                fill-rule="evenodd"
-                clip-rule="evenodd"></path>
-            </svg>
-            Retour
-          </a>
-          <h1 class="mb-4 text-4xl font-bold text-foreground">Conditions Légales</h1>
-          <p class="text-muted-foreground">
-            Dernière mise à jour : {lastUpdatedFormatted}
-          </p>
-        </div>
+            <path
+              d="M6.85355 3.14645C7.04882 3.34171 7.04882 3.65829 6.85355 3.85355L3.70711 7H12.5C12.7761 7 13 7.22386 13 7.5C13 7.77614 12.7761 8 12.5 8H3.70711L6.85355 11.1464C7.04882 11.3417 7.04882 11.6583 6.85355 11.8536C6.65829 12.0488 6.34171 12.0488 6.14645 11.8536L2.14645 7.85355C1.95118 7.65829 1.95118 7.34171 2.14645 7.14645L6.14645 3.14645C6.34171 2.95118 6.65829 2.95118 6.85355 3.14645Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"></path>
+          </svg>
+          Retour
+        </a>
+        <h1 class="mb-4 text-4xl font-bold text-foreground">Mentions légales</h1>
+        {lastUpdated ? <p class="text-muted-foreground">Dernière mise à jour : {lastUpdated}</p> : null}
+      </div>
 
-        <div class="lg:grid lg:grid-cols-4 lg:gap-8">
-          {/* Sidebar Navigation - Desktop Only */}
-          <aside class="hidden lg:col-span-1 lg:block lg:min-h-screen">
-            <nav class="sticky top-28 space-y-2">
-              {
-                termsAndPrivacySections.map((section, index) => (
+      {
+        sections.length === 0 ? (
+          <p class="text-muted-foreground">
+            Les mentions légales ne sont pas encore renseignées. Merci de configurer le contenu
+            dans le Studio Sanity à l'adresse <code>/studio</code>.
+          </p>
+        ) : (
+          <div class="lg:grid lg:grid-cols-4 lg:gap-8">
+            <aside class="hidden lg:col-span-1 lg:block lg:min-h-screen">
+              <nav class="sticky top-28 space-y-2">
+                {sections.map((section, index) => (
                   <a
                     href={`#${section.id}`}
                     draggable="false"
@@ -77,126 +120,26 @@ const lastUpdatedFormatted = new Date(termsAndPrivacyConfig.lastUpdated).toLocal
                       {section.title}
                     </span>
                   </a>
-                ))
-              }
-            </nav>
-          </aside>
+                ))}
+              </nav>
+            </aside>
 
-          {/* Main Content */}
-          <div class="lg:col-span-3">
-            <div class="space-y-16">
-              {
-                termsAndPrivacySections.map((section) => (
+            <div class="lg:col-span-3">
+              <div class="space-y-16">
+                {sections.map((section) => (
                   <section id={section.id} class="scroll-mt-24">
                     <div class="mb-6 border-b border-border pb-4">
                       <h2 class="text-3xl font-bold text-foreground">{section.title}</h2>
                     </div>
 
-                    <div class="space-y-2">
-                      {section.content.map((item) => {
-                        if (Array.isArray(item)) {
-                          return (
-                            <p class="text-base leading-relaxed text-muted-foreground">
-                              {item.map((subItem) => {
-                                if (typeof subItem === 'string') return subItem;
-                                if (subItem.type === 'link') {
-                                  return (
-                                    <a
-                                      href={subItem.url}
-                                      target={subItem.target || '_blank'}
-                                      rel="noopener noreferrer"
-                                      draggable="false"
-                                      class="text-primary hover:underline"
-                                    >
-                                      {subItem.text}
-                                    </a>
-                                  );
-                                }
-                                return subItem.text;
-                              })}
-                            </p>
-                          );
-                        }
-
-                        if (typeof item === 'string') {
-                          if (item === '') return <div class="h-2" />;
-
-                          if (item.startsWith('### ')) {
-                            return (
-                              <h3 class="mt-8 mb-4 text-xl font-semibold text-foreground first:mt-0">
-                                {item.replace('### ', '')}
-                              </h3>
-                            );
-                          }
-
-                          if (
-                            item === item.toUpperCase() &&
-                            item.length > 10 &&
-                            !item.startsWith('•')
-                          ) {
-                            return (
-                              <p class="my-4 text-sm font-semibold text-foreground uppercase">
-                                {item}
-                              </p>
-                            );
-                          }
-
-                          if (item.startsWith('• ')) {
-                            return (
-                              <li
-                                class="ml-4 flex list-none text-base leading-relaxed
-                                  text-muted-foreground"
-                              >
-                                <span class="mr-2 text-primary">•</span>
-                                <span>{item.substring(2)}</span>
-                              </li>
-                            );
-                          }
-
-                          if (item.endsWith(':') && !item.includes('**')) {
-                            return (
-                              <p
-                                class="mt-4 mb-2 text-base leading-relaxed font-medium
-                                  text-foreground"
-                              >
-                                {item}
-                              </p>
-                            );
-                          }
-
-                          return (
-                            <p class="text-base leading-relaxed text-muted-foreground">{item}</p>
-                          );
-                        }
-
-                        if (item.type === 'link') {
-                          return (
-                            <p class="text-base leading-relaxed text-muted-foreground">
-                              <a
-                                href={item.url}
-                                target={item.target || '_blank'}
-                                rel="noopener noreferrer"
-                                draggable="false"
-                                class="text-primary hover:underline"
-                              >
-                                {item.text}
-                              </a>
-                            </p>
-                          );
-                        }
-
-                        return (
-                          <p class="text-base leading-relaxed text-muted-foreground">{item.text}</p>
-                        );
-                      })}
-                    </div>
+                    <LegalContent value={section.content} />
                   </section>
-                ))
-              }
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </main>
-  </div>
+        )
+      }
+    </div>
+  </main>
 </PublicLayout>

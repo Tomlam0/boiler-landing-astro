@@ -1,6 +1,6 @@
 @import 'tailwindcss';
+@import './keyframes.css';
 @import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
 
 @import '@fontsource-variable/plus-jakarta-sans';
 @import '@fontsource/instrument-serif';
@@ -11,22 +11,26 @@
   preferredstrategy: 'pseudoelements';
 }
 
-@custom-variant dark (&:is(.dark *)); /* In case of dark theme */
+@custom-variant dark (&:is(.dark *));
 
 /* ==============================================
-   Fonts
+   Theme
    ============================================== */
 
-@theme inline {
+@theme {
   --font-body: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
-  --font-heading: 'Instrument Serif', 'Georgia', serif;
+  --font-heading: 'Instrument Serif', Georgia, serif;
+
+  /* Easing curves */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ==============================================
-   Colors — Warm Monochrome + Terracotta Accent
+   Colors
    ============================================== */
 
-@theme inline {
+@theme {
   /* Delete tailwind base colors */
   --color-*: initial;
 
@@ -60,54 +64,49 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: var(--radius);
-  --radius-lg: calc(var(--radius) * 1.6);
-  --radius-xl: calc(var(--radius) * 2);
-
-  /* Easing curves */
-  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer base {
   :root {
-    --radius: 0.625rem;
+    --black: oklch(0% 0 0);
+    --white: oklch(100% 0 0);
 
-    --black: oklch(5% 0.01 60);
-    --white: oklch(99% 0.005 60);
-
+    /* Warm off-white / warm near-black */
     --background: oklch(97.5% 0.008 70);
-    --foreground: oklch(15% 0.015 60);
+    --foreground: oklch(18% 0.01 55);
 
-    --primary: oklch(20% 0.02 55);
-    --primary-foreground: oklch(97% 0.005 60);
+    /* Deep warm dark */
+    --primary: oklch(22% 0.015 55);
+    --primary-foreground: oklch(97% 0.008 70);
 
-    --secondary: oklch(92% 0.01 65);
-    --secondary-foreground: oklch(20% 0.02 55);
+    /* Warm medium */
+    --secondary: oklch(93% 0.01 70);
+    --secondary-foreground: oklch(22% 0.015 55);
 
-    --muted: oklch(93% 0.008 65);
-    --muted-foreground: oklch(45% 0.02 55);
+    /* Warm muted */
+    --muted: oklch(93% 0.008 70);
+    --muted-foreground: oklch(55% 0.015 55);
 
-    --accent: oklch(55% 0.14 40);
-    --accent-foreground: oklch(99% 0.005 60);
+    /* Terracotta accent */
+    --accent: oklch(58% 0.14 38);
+    --accent-foreground: oklch(98% 0.005 60);
 
-    --destructive: oklch(30.6% 0.128 25.2);
-    --destructive-foreground: oklch(98% 0 0);
+    /* Destructive */
+    --destructive: oklch(45% 0.18 25);
+    --destructive-foreground: oklch(98% 0.005 60);
 
-    --card: oklch(98.5% 0.006 65);
-    --card-foreground: oklch(15% 0.015 60);
+    /* Warm card */
+    --card: oklch(99% 0.005 70);
+    --card-foreground: oklch(18% 0.01 55);
 
-    --popover: oklch(98.5% 0.006 65);
-    --popover-foreground: oklch(15% 0.015 60);
+    --popover: oklch(99% 0.005 70);
+    --popover-foreground: oklch(18% 0.01 55);
 
-    --border: oklch(88% 0.012 65);
-    --input: oklch(88% 0.012 65);
-    --ring: oklch(55% 0.14 40);
+    /* Warm borders */
+    --border: oklch(88% 0.01 70);
+    --input: oklch(85% 0.012 70);
+    --ring: oklch(58% 0.14 38);
   }
-  /* .dark {
-  } */
 }
 
 /* ==============================================
@@ -116,28 +115,40 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--border);
   }
-  body {
-    @apply bg-background text-foreground;
+
+  html {
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: oklch(58% 0.14 38 / 0.2);
+    color: var(--foreground);
   }
 }
 
 /* ==============================================
-   Grain texture overlay
+   Images — CSS-only fade-in (no JS re-render)
    ============================================== */
 
-@layer utilities {
-  .grain::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    pointer-events: none;
-    opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 256px 256px;
+img[srcset] {
+  opacity: 1;
+  transition: opacity 300ms ease-out;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
@@ -149,4 +160,12 @@
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* ==============================================
+   Article portable text — prose styling
+   ============================================== */
+
+.prose-article {
+  max-width: 65ch;
 }

@@ -1,0 +1,35 @@
+---
+import { urlFor } from '@/sanity/content/image';
+
+interface Props {
+  node: {
+    asset?: { _id?: string; url?: string; metadata?: { lqip?: string } };
+    alt?: string;
+  };
+}
+
+const { node } = Astro.props;
+const src = node.asset ? urlFor(node).url() : null;
+---
+
+{
+  src ? (
+    <figure class="my-10">
+      <img
+        src={src}
+        alt={node.alt ?? ''}
+        width="800"
+        height="450"
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+        class="w-full rounded-lg"
+      />
+      {node.alt ? (
+        <figcaption class="mt-3 text-center text-sm italic text-muted-foreground">
+          {node.alt}
+        </figcaption>
+      ) : null}
+    </figure>
+  ) : null
+}

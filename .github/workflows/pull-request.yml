@@ -1,0 +1,41 @@
+name: Pull Request Validation
+
+# Runs on every PR targeting staging or main.
+# Validates the code compiles and respects lint rules.
+
+on:
+  pull_request:
+    branches: [main, staging]
+
+concurrency:
+  group: pr-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Install, typecheck & lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: package.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: TypeScript check
+        run: pnpm ts
+
+      - name: Lint
+        run: pnpm lint

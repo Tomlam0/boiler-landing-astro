@@ -2,7 +2,6 @@
 import '@/styles/globals.css';
 
 import Head from '@/shared/components/seo/head.astro';
-import { DevAgentationProvider } from '@/shared/components/providers/dev-agentation-provider';
 import type { SeoMetadata } from '@/shared/lib/seo/metadata';
 
 interface BreadcrumbItem {
@@ -27,9 +26,8 @@ const { metadata, breadcrumbs } = Astro.props;
     <Head metadata={metadata} breadcrumbs={breadcrumbs} />
   </head>
   <body
-    class="grain flex flex-col font-body text-foreground selection:bg-accent selection:text-white"
+    class="flex flex-col font-body text-foreground selection:bg-accent selection:text-white"
   >
-    <DevAgentationProvider client:idle />
     <slot />
   </body>
 </html>

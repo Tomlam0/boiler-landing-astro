@@ -15,9 +15,11 @@ export default [
   {
     ignores: [
       'astro.config.mjs',
+      'sanity.cli.ts',
       'node_modules/**',
       'coverage/**',
       '.astro/**',
+      '.sanity/**',
       'dist/**',
       'build/**',
       '*.pem',
@@ -84,7 +86,10 @@ export default [
       'react/button-has-type': 'off',
 
       'import/prefer-default-export': 'off',
-      'import/no-unresolved': ['warn', { caseSensitive: false, ignore: ['astro:*'] }],
+      'import/no-unresolved': [
+        'warn',
+        { caseSensitive: false, ignore: ['astro:*', 'sanity:*'] },
+      ],
       'import/extensions': [
         'error',
         'ignorePackages',
