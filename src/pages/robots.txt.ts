@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 
 import { env } from '@/shared/lib/env';
 
+export const prerender = true;
+
 export const GET: APIRoute = () => {
   const siteUrl = env.SITE_URL;
 

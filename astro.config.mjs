@@ -22,8 +22,9 @@ const studioUrl = process.env.SANITY_STUDIO_URL || 'http://localhost:3333';
 export default defineConfig({
   site: process.env.SITE_URL || 'http://localhost:4321',
 
-  // `'server'` is required for the cookie-based draft mode to work — static
-  // pages can't read per-request cookies. Public reads still hit Sanity's CDN.
+  // `'server'` is required even for the prerendered prod build: the contact
+  // form API route stays dynamic, and Astro hybrid rendering happens in
+  // `output: 'server'` mode with per-route `prerender` flags.
   output: 'server',
   adapter: cloudflare({
     imageService: 'compile',

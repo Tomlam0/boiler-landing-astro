@@ -6,6 +6,8 @@ import { MotionPreset } from '@/shared/components/services/motion-preset';
 import { buttonVariants } from '@/shared/components/ui/button';
 import { resolveMetadata } from '@/shared/lib/seo/metadata';
 
+export const prerender = true;
+
 const metadata = await resolveMetadata({
   title: 'Page non trouvée — Projet',
   description: "La page que vous cherchez n'existe pas.",

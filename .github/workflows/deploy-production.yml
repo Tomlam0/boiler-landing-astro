@@ -5,6 +5,12 @@ on:
     branches:
       - main
   workflow_dispatch:
+  # Triggered by the staging Worker's /api/sanity-rebuild endpoint, which
+  # validates the Sanity webhook signature and calls the GitHub API. Lets us
+  # rebuild the static prod site on every publish without exposing a GitHub
+  # token to Sanity directly.
+  repository_dispatch:
+    types: [sanity-content-update]
 
 concurrency:
   group: production-${{ github.ref }}
@@ -49,5 +55,5 @@ jobs:
       - name: Deploy Sanity Studio (production)
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_DEPLOY_STUDIO_TOKEN }}
-          SITE_URL_PRODUCTION: ${{ vars.SITE_URL }}
+          SITE_URL_STAGING: ${{ vars.SITE_URL_STAGING }}
         run: pnpm deploy:sanity:prod
