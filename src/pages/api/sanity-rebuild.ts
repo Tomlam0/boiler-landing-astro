@@ -27,6 +27,20 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response('Invalid signature', { status: 401 });
   }
 
+  // GitHub's `client_payload` is capped at 10 properties total. Sanity's
+  // default webhook body has way more (every doc field + `_id` / `_type` /
+  // `_rev` / `_createdAt` / etc.), so we keep only what the workflow needs.
+  let docId: string | undefined;
+  let docType: string | undefined;
+  try {
+    const parsed = JSON.parse(body) as { _id?: string; _type?: string };
+    docId = parsed._id;
+    docType = parsed._type;
+  } catch {
+    // body wasn't JSON — proceed with empty payload, the rebuild itself
+    // doesn't need the mutated doc info to run.
+  }
+
   const dispatchRes = await fetch(`https://api.github.com/repos/${repo}/dispatches`, {
     method: 'POST',
     headers: {
@@ -37,7 +51,7 @@ export const POST: APIRoute = async ({ request }) => {
     },
     body: JSON.stringify({
       event_type: 'sanity-content-update',
-      client_payload: JSON.parse(body),
+      client_payload: { docId, docType },
     }),
   });
 
