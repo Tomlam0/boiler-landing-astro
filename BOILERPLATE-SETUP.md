@@ -183,9 +183,11 @@ This token lets the staging Worker call the GitHub API to trigger a prod redeplo
    - **Expiration**: `No expiration` (or set a date if your org enforces rotation)
    - **Repository access**: select **Only select repositories** → pick this repo from the dropdown
 4. Scroll down to **Permissions** → **Repository permissions** → click **Add permissions**
-5. In the popup, search for and check **`Actions`** only. Close the popup.
-6. Back in the form, the **Actions** permission now has a dropdown — set it to **Read and write**
+5. In the popup, search for and check **`Contents`** only. Close the popup.
+6. Back in the form, the **Contents** permission now has a dropdown — set it to **Read and write**
 7. Leave every other permission (Account permissions, all other Repository permissions) on **No access**
+
+> ⚠️ Use **Contents: Read and write**, NOT Actions. The `POST /repos/{owner}/{repo}/dispatches` endpoint we call to trigger a rebuild requires the Contents permission. The Actions permission is for a different endpoint (manual `workflow_dispatch`) and won't work here — GitHub returns `403 "Resource not accessible by personal access token"` if you only grant Actions.
 8. Click **Generate token** at the bottom
 9. Copy the `github_pat_...` string immediately (GitHub won't show it again)
 10. Paste it as the value of the `REPO_DISPATCH_TOKEN` secret in GitHub repo → Settings → Secrets and variables → Actions → Secrets

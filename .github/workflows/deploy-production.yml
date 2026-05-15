@@ -14,7 +14,11 @@ on:
 
 concurrency:
   group: production-${{ github.ref }}
-  cancel-in-progress: false
+  # Content-driven rebuilds: when an editor publishes rapidly (or fires a
+  # batch of changes in one minute), we only care about the LATEST run.
+  # Each new dispatch cancels any in-progress build, so we deploy once with
+  # the freshest content instead of running 10 redundant builds back-to-back.
+  cancel-in-progress: true
 
 jobs:
   deploy:

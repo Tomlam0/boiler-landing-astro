@@ -44,7 +44,12 @@ export const POST: APIRoute = async ({ request }) => {
   if (!dispatchRes.ok) {
     const detail = await dispatchRes.text();
     console.error('[rebuild] GitHub dispatch failed:', dispatchRes.status, detail);
-    return new Response('GitHub dispatch failed', { status: 502 });
+    // Surface the GitHub error verbatim so Sanity's webhook log shows the
+    // real cause (bad PAT scope, missing repo access, etc.). The endpoint
+    // is HMAC-protected, so only Sanity itself can read this response.
+    return new Response(`GitHub dispatch failed (${dispatchRes.status}): ${detail}`, {
+      status: 502,
+    });
   }
 
   return Response.json({ triggered: true });
