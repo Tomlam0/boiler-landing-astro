@@ -18,7 +18,7 @@ Once you've completed all steps, delete this file and proceed with normal develo
 - [`README.md`](./README.md) - Update [`title`](./README.md), [`description`](./README.md)
 - [`package.json`](./package.json#L2) - Update the name
 - [`CLAUDE.md`](./CLAUDE.md) - Update the first line description (project name, stack specifics)
-- [`wrangler.jsonc`](./wrangler.jsonc) - Update the `name` field (Cloudflare worker slug). Ships with `boiler-landing-astro` — replace by your slug. The staging worker name is derived from `--name boiler-landing-astro-staging` in [`deploy-staging.yml`](.github/workflows/deploy-staging.yml) — update that too.
+- [`wrangler.jsonc`](./wrangler.jsonc) - Update the `name` field (Cloudflare worker slug). Ships with `landing-astro` — replace by your slug. The staging worker name is derived from `--name landing-astro-staging` in [`deploy-staging.yml`](.github/workflows/deploy-staging.yml) — update that too.
 - [`package.json`](./package.json) - Update `deploy:sanity:staging` and `deploy:sanity:prod` scripts: replace `--url boiler-landing-astro-staging` / `--url boiler-landing-astro` with your real Sanity hostname slugs (**must be unique globally on `<slug>.sanity.studio`**). Quick check: `curl -s https://<slug>.sanity.studio/ | head -c 50` — if it returns `{"statusCode":404...}`, the slug is free.
 
 **Content Pages:**
@@ -132,11 +132,11 @@ To log in locally and run a one-off deployment:
 
    ```bash
    pnpm build
-   pnpm exec wrangler deploy --name boiler-landing-astro
+   pnpm exec wrangler deploy --name landing-astro
    ```
 
 This section is only needed for the **initial project setup**.
-After connecting your project to Cloudflare, thanks to the `GitHub Actions`, deployments will be automatic on push to `staging` (→ `boiler-landing-astro-staging`) and `main` (→ `boiler-landing-astro`).
+After connecting your project to Cloudflare, thanks to the `GitHub Actions`, deployments will be automatic on push to `staging` (→ `landing-astro-staging`) and `main` (→ `landing-astro`).
 
 To attach a custom domain, go to **Cloudflare Dashboard → Workers & Pages → your worker → Settings → Domains & Routes**.
 
@@ -164,7 +164,7 @@ To attach a custom domain, go to **Cloudflare Dashboard → Workers & Pages → 
 **Variables** (same screen → Variables tab — non-sensitive):
 
 - `SITE_URL` — production site URL (e.g. `https://example.com`)
-- `SITE_URL_STAGING` — staging site URL (e.g. `https://boiler-landing-astro-staging.<your-cf-account>.workers.dev`)
+- `SITE_URL_STAGING` — staging site URL (e.g. `https://landing-astro-staging.<your-cf-account>.workers.dev`)
 - `SANITY_PROJECT_ID` — your Sanity projectId
 - `SANITY_DATASET` — usually `production` for both envs (the separation is via Studio workspaces, not datasets)
 
