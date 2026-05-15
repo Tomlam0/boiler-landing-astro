@@ -3,7 +3,8 @@
 
 interface ImportMetaEnv {
   readonly SANITY_API_READ_TOKEN?: string;
+  // Staging-only — webhook → GitHub repository_dispatch → prod rebuild
   readonly SANITY_REVALIDATE_SECRET?: string;
-  readonly CLOUDFLARE_ZONE_ID?: string;
-  readonly CLOUDFLARE_PURGE_TOKEN?: string;
+  readonly REPO_DISPATCH_TOKEN?: string;
+  readonly GITHUB_REPO?: string;
 }

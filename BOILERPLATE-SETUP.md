@@ -155,18 +155,67 @@ To attach a custom domain, go to **Cloudflare Dashboard → Workers & Pages → 
 - `CLOUDFLARE_API_TOKEN` — Cloudflare API token with **Edit Workers** permissions (used by `wrangler deploy`)
 - `CLOUDFLARE_ACCOUNT_ID` — Cloudflare account ID (dashboard right sidebar)
 - `SANITY_API_TOKEN` — backend token (Editor permissions)
-- `SANITY_API_READ_TOKEN` — preview token (Viewer permissions) — also pushed as Worker secret for `/api/draft-mode/*` + `/api/revalidate/purge`
+- `SANITY_API_READ_TOKEN` — preview token (Viewer permissions) — auto-pushed as Worker secret by the staging CI for `/api/draft-mode/*`
 - `SANITY_DEPLOY_STUDIO_TOKEN` — Sanity token with `sanity.project.deployStudio` grant
-- `SANITY_REVALIDATE_SECRET` — random string shared with the Sanity webhook (`openssl rand -hex 32`)
-- `CLOUDFLARE_ZONE_ID` — Cloudflare zone ID where the Worker is mapped (dashboard → your domain → Overview)
-- `CLOUDFLARE_PURGE_TOKEN` — API token scoped **only** to `Zone.Cache Purge` permission (separate from the deploy token, narrower blast radius)
+- `SANITY_REVALIDATE_SECRET` — random HMAC secret (`openssl rand -base64 32`) shared with the Sanity webhook. Auto-pushed as Worker secret by the staging CI.
+- `REPO_DISPATCH_TOKEN` — fine-grained PAT that lets the staging Worker trigger the prod deploy workflow when Sanity publishes new content. Auto-pushed as Worker secret by the staging CI. See **Creating the REPO_DISPATCH_TOKEN** below for the precise click-by-click setup.
 
 **Variables** (same screen → Variables tab — non-sensitive):
 
-- `SITE_URL` — production site URL (e.g. `https://example.com`)
-- `SITE_URL_STAGING` — staging site URL (e.g. `https://landing-astro-staging.<your-cf-account>.workers.dev`)
+- `SITE_URL` — production site URL (e.g. `https://landing-astro.<your-cf-account>.workers.dev/`)
+- `SITE_URL_STAGING` — staging site URL (e.g. `https://landing-astro-staging.<your-cf-account>.workers.dev/`)
 - `SANITY_PROJECT_ID` — your Sanity projectId
 - `SANITY_DATASET` — usually `production` for both envs (the separation is via Studio workspaces, not datasets)
+- `SANITY_API_VERSION` — Sanity API version (e.g. `2024-10-18`)
+- `SANITY_STUDIO_URL` — production Studio URL (e.g. `https://<slug>.sanity.studio`)
+- `SANITY_STUDIO_URL_STAGING` — staging Studio URL (e.g. `https://<slug>-staging.sanity.studio`)
+
+### Creating the REPO_DISPATCH_TOKEN
+
+This token lets the staging Worker call the GitHub API to trigger a prod redeploy when content changes in Sanity. The setup is one-off and the token has minimal blast radius (scoped to one repo, one permission).
+
+1. Go to [github.com/settings/personal-access-tokens](https://github.com/settings/personal-access-tokens)
+2. Click **Generate new token** → **Fine-grained tokens**
+3. Fill the form:
+   - **Token name**: `sanity-rebuild-dispatch` (or any memorable name)
+   - **Description** (optional): `Triggers prod rebuild on Sanity publish`
+   - **Resource owner**: your personal account
+   - **Expiration**: `No expiration` (or set a date if your org enforces rotation)
+   - **Repository access**: select **Only select repositories** → pick this repo from the dropdown
+4. Scroll down to **Permissions** → **Repository permissions** → click **Add permissions**
+5. In the popup, search for and check **`Actions`** only. Close the popup.
+6. Back in the form, the **Actions** permission now has a dropdown — set it to **Read and write**
+7. Leave every other permission (Account permissions, all other Repository permissions) on **No access**
+8. Click **Generate token** at the bottom
+9. Copy the `github_pat_...` string immediately (GitHub won't show it again)
+10. Paste it as the value of the `REPO_DISPATCH_TOKEN` secret in GitHub repo → Settings → Secrets and variables → Actions → Secrets
+
+### Sanity publish → prod rebuild webhook
+
+Production runs as **prerendered static HTML** — to refresh content after a publish, we trigger a GitHub workflow rebuild. The staging Worker exposes `/api/sanity-rebuild` which validates the Sanity webhook signature and dispatches a `repository_dispatch` event to GitHub. That re-runs the prod deploy workflow.
+
+The staging CI automatically pushes `SANITY_API_READ_TOKEN`, `SANITY_REVALIDATE_SECRET`, `REPO_DISPATCH_TOKEN`, and `GITHUB_REPO` (derived from `github.repository`) to the Worker on every deploy — no manual `wrangler secret put` needed.
+
+**Sanity webhook config** (manage portal → API → Webhooks):
+
+> ⚠️ **Create this webhook only AFTER your first successful staging deploy.** The `/api/sanity-rebuild` endpoint must be live (and its secrets populated by the CI) before Sanity starts hitting it — otherwise the first webhook attempts will 500/401 and Sanity may auto-disable the hook after repeated failures.
+>
+> Recommended order:
+> 1. Add the GitHub Secrets (`SANITY_REVALIDATE_SECRET`, `REPO_DISPATCH_TOKEN`, etc.)
+> 2. Push to `staging` → CI deploys the Worker with secrets
+> 3. Push to `main` → CI deploys the prod build
+> 4. _Then_ create this Sanity webhook
+
+- **URL**: `https://landing-astro-staging.<your-cf-account>.workers.dev/api/sanity-rebuild`
+- **Dataset**: `production`
+- **Trigger on**: Create, Update, Delete
+- **Filter** (optional): `_type in ["article", "homepage", "blogPage", "contactPage", "legal", "settings"]`
+- **HTTP method**: POST
+- **Secret**: paste the same value as `SANITY_REVALIDATE_SECRET`
+- **Trigger webhook when drafts are modified**: **off**
+- **Trigger webhook when versions are modified**: **off**
+
+You only need **one** webhook (not two — staging doesn't rebuild, only prod does).
 
 To create the API token:
 
@@ -189,28 +238,15 @@ To retrieve the account ID: in the Cloudflare dashboard, the account ID is shown
    - `SANITY_API_READ_TOKEN`
    - `SANITY_DEPLOY_STUDIO_TOKEN`
    - `SANITY_REVALIDATE_SECRET`
-   - `CLOUDFLARE_ZONE_ID`
-   - `CLOUDFLARE_PURGE_TOKEN`
+   - `REPO_DISPATCH_TOKEN`
 5. Under the **Variables** tab, click **New repository variable** and add:
    - `SITE_URL`
    - `SITE_URL_STAGING`
    - `SANITY_PROJECT_ID`
    - `SANITY_DATASET`
-
-### Sanity webhook → `/api/revalidate/purge`
-
-For instant cache invalidation on publish (vs the 60s TTL fallback), create a Sanity webhook:
-
-1. Sanity dashboard → API → Webhooks → Create webhook
-2. **URL**: `https://<your-domain>/api/revalidate/purge` (one webhook per environment if you want staging+prod auto-purged separately)
-3. **Trigger on**: Create, Update, Delete
-4. **Filter** (optional): `_type in ["article", "homepage", "blogPage", "contactPage", "legal", "settings"]`
-5. **HTTP method**: POST
-6. **Secret**: paste the same value you put in `SANITY_REVALIDATE_SECRET`
-
-When a doc is published, the webhook hits `/api/revalidate/purge`, which validates the signature, maps the doc type/id to Cloudflare cache tags, and calls Cloudflare's purge API. Public visitors see the new content within ~5s.
-
-> Free Sanity plan caps at 2 webhooks per project. If you also use the Next-CMS boilerplate on the same Sanity project, you'll hit the limit fast. Options: upgrade to Sanity Growth ($99/mo, 5 webhooks), or fan-out from one app's revalidate to the others, or accept the 60s TTL fallback on the side without a webhook.
+   - `SANITY_API_VERSION`
+   - `SANITY_STUDIO_URL`
+   - `SANITY_STUDIO_URL_STAGING`
 
 ## 🔐 Before going live — Security reminder
 

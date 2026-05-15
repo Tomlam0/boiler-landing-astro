@@ -1,10 +1,12 @@
 import { defineMiddleware } from 'astro:middleware';
 import { perspectiveCookieName } from '@sanity/preview-url-secret/constants';
 
-// `Vary: Cookie` prevents the public cached HTML from being served to draft
-// visitors (their perspective cookie would otherwise be ignored by the CDN).
+// Short edge TTL + stale-while-revalidate: published content shows up within
+// ~10s, and visitors never see latency thanks to SWR (CF serves stale while
+// refetching in the background). `Vary: Cookie` keeps draft visitors out of
+// the public cache.
 
-const PUBLIC_CACHE = 'public, s-maxage=60, stale-while-revalidate=300';
+const PUBLIC_CACHE = 'public, s-maxage=10, stale-while-revalidate=60';
 const NO_CACHE = 'private, no-store';
 
 export const onRequest = defineMiddleware(async (context, next) => {
