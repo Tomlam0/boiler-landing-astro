@@ -44,9 +44,9 @@ export function ContactForm() {
 
   if (status.kind === 'success') {
     return (
-      <div className="bg-accent/10 border-accent/20 text-foreground rounded-lg border p-8">
+      <div className="rounded-lg border border-accent/20 bg-accent/10 p-8 text-foreground">
         <p className="font-heading text-lg font-semibold">Message envoy&eacute;</p>
-        <p className="text-muted-foreground mt-2 text-sm">
+        <p className="mt-2 text-sm text-muted-foreground">
           Nous vous r&eacute;pondrons dans les plus brefs d&eacute;lais.
         </p>
       </div>
@@ -69,7 +69,7 @@ export function ContactForm() {
       />
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="name" className="text-foreground text-sm font-medium">
+        <label htmlFor="name" className="text-sm font-medium text-foreground">
           Nom
         </label>
         <input
@@ -77,15 +77,15 @@ export function ContactForm() {
           name="name"
           type="text"
           autoComplete="name"
-          className="border-input bg-background text-foreground focus:border-accent
-            focus:ring-accent w-full rounded-lg border px-4 py-3 text-sm transition-colors
-            duration-200 focus:ring-1 focus:outline-none"
+          className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm
+            text-foreground transition-colors duration-200 focus:border-accent focus:ring-1
+            focus:ring-accent focus:outline-none"
         />
-        {errors.name ? <p className="text-destructive text-sm">{errors.name[0]}</p> : null}
+        {errors.name ? <p className="text-sm text-destructive">{errors.name[0]}</p> : null}
       </div>
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="email" className="text-foreground text-sm font-medium">
+        <label htmlFor="email" className="text-sm font-medium text-foreground">
           Email
         </label>
         <input
@@ -93,29 +93,29 @@ export function ContactForm() {
           name="email"
           type="email"
           autoComplete="email"
-          className="border-input bg-background text-foreground focus:border-accent
-            focus:ring-accent w-full rounded-lg border px-4 py-3 text-sm transition-colors
-            duration-200 focus:ring-1 focus:outline-none"
+          className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm
+            text-foreground transition-colors duration-200 focus:border-accent focus:ring-1
+            focus:ring-accent focus:outline-none"
         />
-        {errors.email ? <p className="text-destructive text-sm">{errors.email[0]}</p> : null}
+        {errors.email ? <p className="text-sm text-destructive">{errors.email[0]}</p> : null}
       </div>
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="message" className="text-foreground text-sm font-medium">
+        <label htmlFor="message" className="text-sm font-medium text-foreground">
           Message
         </label>
         <textarea
           id="message"
           name="message"
           rows={5}
-          className="border-input bg-background text-foreground focus:border-accent
-            focus:ring-accent w-full resize-none rounded-lg border px-4 py-3 text-sm
-            transition-colors duration-200 focus:ring-1 focus:outline-none"
+          className="w-full resize-none rounded-lg border border-input bg-background px-4 py-3
+            text-sm text-foreground transition-colors duration-200 focus:border-accent focus:ring-1
+            focus:ring-accent focus:outline-none"
         />
-        {errors.message ? <p className="text-destructive text-sm">{errors.message[0]}</p> : null}
+        {errors.message ? <p className="text-sm text-destructive">{errors.message[0]}</p> : null}
       </div>
 
-      {errors._form ? <p className="text-destructive text-sm">{errors._form[0]}</p> : null}
+      {errors._form ? <p className="text-sm text-destructive">{errors._form[0]}</p> : null}
 
       <Button type="submit" disabled={isPending} size="lg" className="mt-2 w-fit">
         {isPending ? 'Envoi en cours…' : 'Envoyer le message'}

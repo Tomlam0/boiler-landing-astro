@@ -23,14 +23,14 @@ export default function Nav() {
   ];
 
   return (
-    <nav className="bg-background/80 sticky top-0 z-10 backdrop-blur-md select-none">
+    <nav className="sticky top-0 z-10 bg-background/80 backdrop-blur-md select-none">
       <div className="mx-auto max-w-6xl px-6 lg:px-8">
         <div className="flex h-18 items-center justify-between">
           {/* Logo */}
           <a
             href="/"
             draggable={false}
-            className="font-heading text-foreground text-xl font-semibold tracking-tight
+            className="font-heading text-xl font-semibold tracking-tight text-foreground
               transition-opacity duration-200 hover:opacity-70"
           >
             Logo
@@ -44,7 +44,7 @@ export default function Nav() {
                 href={item.href}
                 draggable={false}
                 className={cn(
-                  'text-muted-foreground hover:text-foreground rounded-md px-4 py-2 text-sm',
+                  'rounded-md px-4 py-2 text-sm text-muted-foreground hover:text-foreground',
                   'transition-colors duration-200'
                 )}
               >
@@ -74,8 +74,8 @@ export default function Nav() {
                       href={item.href}
                       draggable={false}
                       onClick={() => setIsOpen(false)}
-                      className="text-foreground font-heading rounded-md px-4 py-3 text-2xl
-                        font-medium transition-opacity duration-200 hover:opacity-60"
+                      className="rounded-md px-4 py-3 font-heading text-2xl font-medium
+                        text-foreground transition-opacity duration-200 hover:opacity-60"
                     >
                       {item.label}
                     </a>

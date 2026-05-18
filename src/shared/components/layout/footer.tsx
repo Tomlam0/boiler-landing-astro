@@ -26,20 +26,20 @@ const SOCIAL_LINKS = [
 ] as const;
 
 export default function Footer({ copyright, social }: FooterProps) {
-  const visibleSocials = SOCIAL_LINKS.map((s) => ({ ...s, href: social?.[s.key] })).filter(
-    (s) => Boolean(s.href),
+  const visibleSocials = SOCIAL_LINKS.map((s) => ({ ...s, href: social?.[s.key] })).filter((s) =>
+    Boolean(s.href)
   );
 
   return (
-    <footer className="border-border/50 border-t select-none">
+    <footer className="border-t border-border/50 select-none">
       <div className="mx-auto max-w-6xl px-6 py-16 lg:px-8">
         <div className="flex flex-col items-center gap-8 md:flex-row md:justify-between">
           {/* Brand */}
           <div className="flex flex-col items-center gap-2 md:items-start">
-            <span className="font-heading text-foreground text-lg font-semibold tracking-tight">
+            <span className="font-heading text-lg font-semibold tracking-tight text-foreground">
               Logo
             </span>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               &copy; {currentYear} {copyright}
             </p>
           </div>
@@ -55,8 +55,8 @@ export default function Footer({ copyright, social }: FooterProps) {
                   target="_blank"
                   rel="noreferrer noopener"
                   draggable={false}
-                  className="text-muted-foreground hover:text-foreground flex size-9 items-center
-                    justify-center rounded-md transition-colors duration-200"
+                  className="flex size-9 items-center justify-center rounded-md
+                    text-muted-foreground transition-colors duration-200 hover:text-foreground"
                 >
                   <Icon className="size-5" />
                   <span className="sr-only">{label}</span>
@@ -70,16 +70,16 @@ export default function Footer({ copyright, social }: FooterProps) {
             <a
               href="/mentions-legales"
               draggable={false}
-              className="text-muted-foreground hover:text-foreground text-sm transition-colors
-                duration-200"
+              className="text-sm text-muted-foreground transition-colors duration-200
+                hover:text-foreground"
             >
               Mentions l&eacute;gales
             </a>
             <a
               href="/contact"
               draggable={false}
-              className="text-muted-foreground hover:text-foreground text-sm transition-colors
-                duration-200"
+              className="text-sm text-muted-foreground transition-colors duration-200
+                hover:text-foreground"
             >
               Contact
             </a>

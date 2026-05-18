@@ -187,10 +187,7 @@ This token lets the staging Worker call the GitHub API to trigger a prod redeplo
 6. Back in the form, the **Contents** permission now has a dropdown — set it to **Read and write**
 7. Leave every other permission (Account permissions, all other Repository permissions) on **No access**
 
-> ⚠️ Use **Contents: Read and write**, NOT Actions. The `POST /repos/{owner}/{repo}/dispatches` endpoint we call to trigger a rebuild requires the Contents permission. The Actions permission is for a different endpoint (manual `workflow_dispatch`) and won't work here — GitHub returns `403 "Resource not accessible by personal access token"` if you only grant Actions.
-8. Click **Generate token** at the bottom
-9. Copy the `github_pat_...` string immediately (GitHub won't show it again)
-10. Paste it as the value of the `REPO_DISPATCH_TOKEN` secret in GitHub repo → Settings → Secrets and variables → Actions → Secrets
+> ⚠️ Use **Contents: Read and write**, NOT Actions. The `POST /repos/{owner}/{repo}/dispatches` endpoint we call to trigger a rebuild requires the Contents permission. The Actions permission is for a different endpoint (manual `workflow_dispatch`) and won't work here — GitHub returns `403 "Resource not accessible by personal access token"` if you only grant Actions. 8. Click **Generate token** at the bottom 9. Copy the `github_pat_...` string immediately (GitHub won't show it again) 10. Paste it as the value of the `REPO_DISPATCH_TOKEN` secret in GitHub repo → Settings → Secrets and variables → Actions → Secrets
 
 ### Sanity publish → prod rebuild webhook
 
@@ -203,6 +200,7 @@ The staging CI automatically pushes `SANITY_API_READ_TOKEN`, `SANITY_REVALIDATE_
 > ⚠️ **Create this webhook only AFTER your first successful staging deploy.** The `/api/sanity-rebuild` endpoint must be live (and its secrets populated by the CI) before Sanity starts hitting it — otherwise the first webhook attempts will 500/401 and Sanity may auto-disable the hook after repeated failures.
 >
 > Recommended order:
+>
 > 1. Add the GitHub Secrets (`SANITY_REVALIDATE_SECRET`, `REPO_DISPATCH_TOKEN`, etc.)
 > 2. Push to `staging` → CI deploys the Worker with secrets
 > 3. Push to `main` → CI deploys the prod build

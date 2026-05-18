@@ -1,14 +1,12 @@
 import eslint from '@eslint/js';
+import eslintReact from '@eslint-react/eslint-plugin';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tseslintParser from '@typescript-eslint/parser';
+import astroPlugin from 'eslint-plugin-astro';
 import importPlugin from 'eslint-plugin-import';
 import onlyWarnPlugin from 'eslint-plugin-only-warn';
-
-import reactPlugin from 'eslint-plugin-react';
-import reactHooksPlugin from 'eslint-plugin-react-hooks';
-
-import astroPlugin from 'eslint-plugin-astro';
 import prettierPlugin from 'eslint-plugin-prettier';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import tailwindCanonicalClasses from 'eslint-plugin-tailwind-canonical-classes';
 
 export default [
@@ -35,12 +33,10 @@ export default [
 
     plugins: {
       '@typescript-eslint': tseslint,
+      '@eslint-react': eslintReact,
       import: importPlugin,
       'only-warn': onlyWarnPlugin,
-
-      react: reactPlugin,
       'react-hooks': reactHooksPlugin,
-
       prettier: prettierPlugin,
       'tailwind-canonical-classes': tailwindCanonicalClasses,
     },
@@ -65,8 +61,9 @@ export default [
         },
         node: true,
       },
-      react: {
+      'react-x': {
         version: 'detect',
+        importSource: 'react',
       },
     },
 
@@ -74,16 +71,10 @@ export default [
       ...eslint.configs.recommended.rules,
       ...tseslint.configs.recommended.rules,
 
-      ...reactPlugin.configs.recommended.rules,
+      ...eslintReact.configs['recommended-typescript'].rules,
       ...reactHooksPlugin.configs.recommended.rules,
 
-      'react/react-in-jsx-scope': 'off',
-      'react/prop-types': 'off',
       'no-undef': 'off',
-      'react/jsx-props-no-spreading': 'off',
-      'react/require-default-props': 'off',
-      'react/jsx-filename-extension': ['warn', { extensions: ['.jsx', '.tsx'] }],
-      'react/button-has-type': 'off',
 
       'import/prefer-default-export': 'off',
       'import/no-unresolved': [

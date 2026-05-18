@@ -9,7 +9,7 @@ export default function Hero() {
       <div className="flex flex-col items-center gap-8 py-32">
         {/* Overline */}
         <MotionPreset fade delay={0} transition={{ duration: 0.6 }}>
-          <span className="text-accent font-body text-xs font-medium tracking-widest uppercase">
+          <span className="font-body text-xs font-medium tracking-widest text-accent uppercase">
             Boilerplate Astro &times; Sanity
           </span>
         </MotionPreset>
@@ -23,7 +23,7 @@ export default function Hero() {
           transition={{ duration: 0.7 }}
         >
           <h1
-            className="font-heading text-center text-5xl leading-tight font-semibold tracking-tight
+            className="text-center font-heading text-5xl leading-tight font-semibold tracking-tight
               text-balance sm:text-6xl md:text-7xl lg:text-8xl lg:leading-none"
           >
             Votre vitrine,
@@ -41,8 +41,8 @@ export default function Hero() {
           transition={{ duration: 0.6 }}
         >
           <p
-            className="text-muted-foreground max-w-xl text-center text-lg leading-relaxed
-              font-light"
+            className="max-w-xl text-center text-lg leading-relaxed font-light
+              text-muted-foreground"
           >
             Un site vitrine &eacute;l&eacute;gant et administrable, con&ccedil;u pour mettre en
             valeur votre marque avec une exp&eacute;rience fluide et captivante.

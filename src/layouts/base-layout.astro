@@ -25,9 +25,7 @@ const { metadata, breadcrumbs } = Astro.props;
   <head>
     <Head metadata={metadata} breadcrumbs={breadcrumbs} />
   </head>
-  <body
-    class="flex flex-col font-body text-foreground selection:bg-accent selection:text-white"
-  >
+  <body class="flex flex-col font-body text-foreground selection:bg-accent selection:text-white">
     <slot />
   </body>
 </html>

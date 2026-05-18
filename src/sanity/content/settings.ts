@@ -71,7 +71,10 @@ export async function getSettings(): Promise<SiteSettings> {
       },
     };
   } catch (error) {
-    console.warn('[sanity] getSettings failed, falling back to defaults:', (error as Error).message);
+    console.warn(
+      '[sanity] getSettings failed, falling back to defaults:',
+      (error as Error).message
+    );
     return DEFAULTS;
   }
 }

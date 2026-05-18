@@ -87,14 +87,18 @@ const lastUpdated = legal?.lastUpdated
           Retour
         </a>
         <h1 class="mb-4 text-4xl font-bold text-foreground">Mentions légales</h1>
-        {lastUpdated ? <p class="text-muted-foreground">Dernière mise à jour : {lastUpdated}</p> : null}
+        {
+          lastUpdated ? (
+            <p class="text-muted-foreground">Dernière mise à jour : {lastUpdated}</p>
+          ) : null
+        }
       </div>
 
       {
         sections.length === 0 ? (
           <p class="text-muted-foreground">
-            Les mentions légales ne sont pas encore renseignées. Merci de configurer le contenu
-            dans le Studio Sanity à l'adresse <code>/studio</code>.
+            Les mentions légales ne sont pas encore renseignées. Merci de configurer le contenu dans
+            le Studio Sanity à l'adresse <code>/studio</code>.
           </p>
         ) : (
           <div class="lg:grid lg:grid-cols-4 lg:gap-8">

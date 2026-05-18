@@ -58,12 +58,14 @@ export default function SanityVisualEditing() {
   const baselineMutationRef = useRef<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/draft-mode/check', { cache: 'no-store' })
+    const controller = new AbortController();
+    fetch('/api/draft-mode/check', { cache: 'no-store', signal: controller.signal })
       .then((r) => (r.ok ? r.json() : null))
       .then((d: { latestMutation: string | null } | null) => {
         if (d) baselineMutationRef.current = d.latestMutation;
       })
       .catch(() => {});
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {

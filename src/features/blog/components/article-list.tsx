@@ -21,7 +21,7 @@ export function ArticleList({ articles }: ArticleListProps) {
             delay={0.1}
             transition={{ duration: 0.5 }}
           >
-            <span className="text-accent text-xs font-medium tracking-widest uppercase">Blog</span>
+            <span className="text-xs font-medium tracking-widest text-accent uppercase">Blog</span>
           </MotionPreset>
           <MotionPreset
             slide={{ direction: 'up', offset: 30 }}
@@ -39,7 +39,7 @@ export function ArticleList({ articles }: ArticleListProps) {
             delay={0.2}
             transition={{ duration: 0.5 }}
           >
-            <p className="text-muted-foreground text-base leading-relaxed">
+            <p className="text-base leading-relaxed text-muted-foreground">
               D&eacute;couvrez nos derniers articles et actualit&eacute;s.
             </p>
           </MotionPreset>
@@ -59,27 +59,27 @@ export function ArticleList({ articles }: ArticleListProps) {
                 <a
                   href={`/blog/${article.slug}`}
                   draggable={false}
-                  className="group focus-visible:ring-ring rounded-lg focus-visible:ring-2
+                  className="group rounded-lg focus-visible:ring-2 focus-visible:ring-ring
                     focus-visible:ring-offset-2 focus-visible:outline-none"
                 >
                   <article className="flex flex-col gap-4">
                     {/* Image */}
-                    <div className="bg-muted relative aspect-3/2 w-full overflow-hidden rounded-lg">
+                    <div className="relative aspect-3/2 w-full overflow-hidden rounded-lg bg-muted">
                       {article.image?.asset ? (
                         <img
                           src={urlFor(article.image).url()}
                           alt={article.image.alt || article.title || ''}
                           loading="lazy"
                           decoding="async"
-                          className="absolute inset-0 h-full w-full object-cover transition-transform
-                            duration-500 group-hover:scale-105"
+                          className="absolute inset-0 h-full w-full object-cover
+                            transition-transform duration-500 group-hover:scale-105"
                           style={{ transitionTimingFunction: 'cubic-bezier(0.25, 1, 0.5, 1)' }}
                           draggable={false}
                         />
                       ) : (
                         <div
-                          className="text-muted-foreground/30 flex h-full items-center
-                            justify-center"
+                          className="flex h-full items-center justify-center
+                            text-muted-foreground/30"
                         >
                           <svg
                             className="size-10"
@@ -101,7 +101,7 @@ export function ArticleList({ articles }: ArticleListProps) {
                     {/* Content */}
                     <div className="flex flex-col gap-2">
                       {article.publishedAt ? (
-                        <time className="text-muted-foreground text-xs tracking-wide">
+                        <time className="text-xs tracking-wide text-muted-foreground">
                           {new Date(article.publishedAt).toLocaleDateString('fr-FR', {
                             day: 'numeric',
                             month: 'long',
@@ -111,15 +111,15 @@ export function ArticleList({ articles }: ArticleListProps) {
                       ) : null}
 
                       <h2
-                        className="font-heading group-hover:text-accent line-clamp-2 text-xl
-                          leading-snug font-semibold tracking-tight transition-colors duration-200
+                        className="line-clamp-2 font-heading text-xl leading-snug font-semibold
+                          tracking-tight transition-colors duration-200 group-hover:text-accent
                           md:text-2xl"
                       >
                         {article.title}
                       </h2>
 
                       {article.excerpt ? (
-                        <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
+                        <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
                           {article.excerpt}
                         </p>
                       ) : null}
@@ -131,10 +131,10 @@ export function ArticleList({ articles }: ArticleListProps) {
           </div>
         ) : (
           <div className="flex w-full flex-col items-center gap-4 py-20 text-center">
-            <p className="font-heading text-muted-foreground text-xl">
+            <p className="font-heading text-xl text-muted-foreground">
               Aucun article pour le moment
             </p>
-            <p className="text-muted-foreground/70 text-sm">
+            <p className="text-sm text-muted-foreground/70">
               Les articles appara&icirc;tront ici une fois publi&eacute;s depuis le studio.
             </p>
           </div>

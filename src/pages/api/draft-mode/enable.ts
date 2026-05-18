@@ -15,10 +15,11 @@ export const GET: APIRoute = async ({ request, cookies, redirect }) => {
   }
 
   const clientWithToken = sanityClient.withConfig({ token });
-  const { isValid, redirectTo = '/', studioPreviewPerspective } = await validatePreviewUrl(
-    clientWithToken,
-    request.url
-  );
+  const {
+    isValid,
+    redirectTo = '/',
+    studioPreviewPerspective,
+  } = await validatePreviewUrl(clientWithToken, request.url);
 
   if (!isValid) {
     return new Response('Invalid secret', { status: 401 });
