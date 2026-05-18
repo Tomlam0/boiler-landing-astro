@@ -31,7 +31,7 @@ export const POST: APIRoute = async ({ request }) => {
         status: 'error',
         errors: z.flattenError(result.error).fieldErrors,
       }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } },
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
     );
   }
 

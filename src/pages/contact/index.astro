@@ -18,7 +18,8 @@ const { data } = await loadQuery<CONTACT_PAGE_QUERY_RESULT>({
 
 const metadata = await resolveMetadata({
   title: data?.seoTitle ?? 'Contact — Projet',
-  description: data?.seoDescription ?? 'Contactez-nous — nous vous répondrons dans les plus brefs délais.',
+  description:
+    data?.seoDescription ?? 'Contactez-nous — nous vous répondrons dans les plus brefs délais.',
   path: 'contact',
   siteName: 'Projet',
 });
@@ -37,8 +38,7 @@ const metadata = await resolveMetadata({
         Contact
       </span>
       <h1
-        class="mb-4 font-heading text-4xl font-semibold tracking-tight text-foreground
-          md:text-5xl"
+        class="mb-4 font-heading text-4xl font-semibold tracking-tight text-foreground md:text-5xl"
       >
         Écrivez-nous
       </h1>

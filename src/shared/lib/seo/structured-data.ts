@@ -6,10 +6,7 @@ interface BreadcrumbItem {
   url: string;
 }
 
-export function generateStructuredData(
-  metadata: SeoMetadata,
-  breadcrumbs?: BreadcrumbItem[],
-) {
+export function generateStructuredData(metadata: SeoMetadata, breadcrumbs?: BreadcrumbItem[]) {
   const baseUrl = env.SITE_URL;
 
   const organizationData = {

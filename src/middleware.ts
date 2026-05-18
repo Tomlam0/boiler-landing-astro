@@ -14,7 +14,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   const isDraft = context.cookies.has(perspectiveCookieName);
   const isApi = context.url.pathname.startsWith('/api/');
-  const cacheable = !isDraft && !isApi && context.request.method === 'GET' && response.status === 200;
+  const cacheable =
+    !isDraft && !isApi && context.request.method === 'GET' && response.status === 200;
 
   response.headers.set('Cache-Control', cacheable ? PUBLIC_CACHE : NO_CACHE);
   if (cacheable) response.headers.set('Vary', 'Cookie');

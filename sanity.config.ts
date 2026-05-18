@@ -90,11 +90,7 @@ const localWorkspace = () => ({
   title: 'Local',
   basePath: '/',
   dataset: 'development',
-  plugins: [
-    ...sharedPlugins,
-    presentationFor(ensureUrl(LOCAL_URL, 'SITE_URL')),
-    visionTool(),
-  ],
+  plugins: [...sharedPlugins, presentationFor(ensureUrl(LOCAL_URL, 'SITE_URL')), visionTool()],
 });
 
 // STUDIO_TARGET selects WHICH studio bundle is built:

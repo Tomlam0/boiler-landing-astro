@@ -7,9 +7,9 @@ These overrides are **temporary** and should be removed when upstream packages a
 
 ### Current Security Overrides
 
-| Package   | Vulnerability                                          | CVE | Severity | Override   | Affected Libraries       |
-| --------- | ------------------------------------------------------ | --- | -------- | ---------- | ------------------------ |
-| `devalue` | Prototype Pollution via crafted serialized input (XSS) | N/A | Moderate | `^5.6.4`  | astro, @astrojs/react    |
+| Package   | Vulnerability                                          | CVE | Severity | Override | Affected Libraries    |
+| --------- | ------------------------------------------------------ | --- | -------- | -------- | --------------------- |
+| `devalue` | Prototype Pollution via crafted serialized input (XSS) | N/A | Moderate | `^5.6.4` | astro, @astrojs/react |
 
 ### When to Remove Overrides
 

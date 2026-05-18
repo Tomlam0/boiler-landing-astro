@@ -296,13 +296,13 @@ Visitors without the cookie pay **zero JS overhead** — the entire preview stac
 
 Two builds from the same codebase, deployed to two Cloudflare Workers:
 
-| | Staging (`landing-astro-staging`) | Production (`landing-astro`) |
-|---|---|---|
-| Public pages | **SSR** — cookie read per request, draft mode active | **Prerendered** to static HTML at build time |
-| API routes | SSR (always) | SSR (always — contact form, etc.) |
-| Visual Editing iframe target | ✅ This is what Sanity Presentation loads | ❌ No draft mode capability |
-| TTFB visitor | ~10-30ms (SSR + cache) | **~5ms** (static HTML served from CF edge assets) |
-| Triggered by | Push to `staging` branch | Push to `main` branch + Sanity publish webhook |
+|                              | Staging (`landing-astro-staging`)                    | Production (`landing-astro`)                      |
+| ---------------------------- | ---------------------------------------------------- | ------------------------------------------------- |
+| Public pages                 | **SSR** — cookie read per request, draft mode active | **Prerendered** to static HTML at build time      |
+| API routes                   | SSR (always)                                         | SSR (always — contact form, etc.)                 |
+| Visual Editing iframe target | ✅ This is what Sanity Presentation loads            | ❌ No draft mode capability                       |
+| TTFB visitor                 | ~10-30ms (SSR + cache)                               | **~5ms** (static HTML served from CF edge assets) |
+| Triggered by                 | Push to `staging` branch                             | Push to `main` branch + Sanity publish webhook    |
 
 **The same `.astro` page files serve both modes.** Each public page declares `export const prerender = true;` (the prod default). The staging CI runs a `sed` substitution before `astro build` to flip those literals to `false`, which puts the page into SSR mode so the draft cookie can be read. API routes always declare `prerender = false` and stay dynamic in both deployments.
 
