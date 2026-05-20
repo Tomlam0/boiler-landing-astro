@@ -19,6 +19,7 @@ jobs:
       SITE_URL: ${{ vars.SITE_URL_STAGING }}
       SANITY_PROJECT_ID: ${{ vars.SANITY_PROJECT_ID }}
       SANITY_DATASET: ${{ vars.SANITY_DATASET }}
+      SANITY_API_VERSION: ${{ vars.SANITY_API_VERSION }}
 
     steps:
       - uses: actions/checkout@v4
@@ -77,5 +78,5 @@ jobs:
           # Dedicated token with the `sanity.project.deployStudio` grant
           # (the regular SANITY_API_TOKEN only has data read/write rights)
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_DEPLOY_STUDIO_TOKEN }}
-          SITE_URL_STAGING: ${{ vars.SITE_URL_STAGING }}
+          SITE_URL: ${{ vars.SITE_URL_STAGING }}
         run: pnpm deploy:sanity:staging

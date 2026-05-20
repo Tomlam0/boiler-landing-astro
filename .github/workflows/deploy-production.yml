@@ -29,6 +29,7 @@ jobs:
       SITE_URL: ${{ vars.SITE_URL }}
       SANITY_PROJECT_ID: ${{ vars.SANITY_PROJECT_ID }}
       SANITY_DATASET: ${{ vars.SANITY_DATASET }}
+      SANITY_API_VERSION: ${{ vars.SANITY_API_VERSION }}
 
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +58,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deploy Sanity Studio (production)
+        # Prod Studio has no Presentation tool, so no SITE_URL needed at build.
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_DEPLOY_STUDIO_TOKEN }}
-          SITE_URL_STAGING: ${{ vars.SITE_URL_STAGING }}
         run: pnpm deploy:sanity:prod
