@@ -2,6 +2,12 @@
 # less than 7 days ago.
 minimumReleaseAge: 10080
 
+# Refuse install if running Node version doesn't match `engines.node` in package.json.
+engineStrict: true
+
+# Refuse install if the active pnpm version doesn't match the `packageManager` field.
+pmOnFail: error
+
 allowBuilds:
   esbuild: false
   msw: true
@@ -10,7 +16,8 @@ allowBuilds:
   workerd: true
 
 overrides:
-  devalue: ^5.8.1
+  devalue: 5.7.1
+  '@types/node': 25.6.2
   vite: ^7.3.3
   "picomatch@2": ^2.3.2
   lodash: ^4.18.1

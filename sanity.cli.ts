@@ -18,17 +18,16 @@ function maybe(key: string): string | undefined {
 }
 
 const target = process.env.STUDIO_TARGET;
-const isCloudBuild = target === 'staging' || target === 'production';
 
 // Build-time env injected into the Studio bundle so `sanity.config.ts` can
-// read it via `import.meta.env.*` (Vite replaces statically). Both cloud
-// workspaces (staging + production) point their Presentation iframe at the
-// staging SSR URL, so SITE_URL_STAGING is the only cloud URL needed.
+// read it via `import.meta.env.*` (Vite replaces statically). SITE_URL is
+// required only when the build will mount the Presentation tool — that is,
+// for the staging cloud build and local dev. The production Studio is
+// publish-only (no Presentation), so SITE_URL is not needed there.
 const STUDIO_BUILD_ENV: Record<string, string | undefined> = {
   SANITY_PROJECT_ID: pick('SANITY_PROJECT_ID'),
   STUDIO_TARGET: target,
-  SITE_URL: isCloudBuild ? undefined : pick('SITE_URL'),
-  SITE_URL_STAGING: isCloudBuild ? pick('SITE_URL_STAGING') : maybe('SITE_URL_STAGING'),
+  SITE_URL: target === 'production' ? undefined : pick('SITE_URL'),
 };
 
 export default defineCliConfig({

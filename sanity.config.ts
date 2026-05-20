@@ -21,12 +21,11 @@ function ensureUrl(value: string | undefined, key: string): string {
   return value;
 }
 
-// Production runs as pure static HTML — it has no SSR, no draft cookies, no
-// Visual Editing. So BOTH workspaces (staging + production) point their
-// Presentation iframe at the staging URL, which is the SSR-enabled mirror
-// where editors can preview drafts live before publishing.
-const STAGING_URL = import.meta.env.SITE_URL_STAGING;
-const LOCAL_URL = import.meta.env.SITE_URL;
+// Each workspace's Presentation iframe points at its own environment URL.
+// Staging build → SITE_URL is the staging URL.
+// Local dev → SITE_URL is the local dev URL.
+// Production has no Presentation tool (static HTML can't render live drafts).
+const SITE_URL = import.meta.env.SITE_URL;
 
 const previewModeRoutes = {
   enable: '/api/draft-mode/enable',
@@ -66,22 +65,23 @@ const stagingWorkspace = () => ({
   title: 'Staging',
   basePath: '/',
   dataset: 'production',
-  plugins: [...sharedPlugins, presentationFor(ensureUrl(STAGING_URL, 'SITE_URL_STAGING'))],
+  plugins: [...sharedPlugins, presentationFor(ensureUrl(SITE_URL, 'SITE_URL'))],
   document: {
     actions: (prev: { action?: string }[]) =>
       prev.filter(({ action }) => action === 'discardChanges'),
   },
 });
 
+// No Presentation tool here. Prod runs as static HTML — draft mode requires
+// SSR, so live preview is impossible. Editors switch to the staging Studio
+// to draft and preview, then come back here only to click Publish.
 const productionWorkspace = () => ({
   ...baseSettings,
   name: 'production',
   title: 'Production',
   basePath: '/',
   dataset: 'production',
-  // Presentation points at the staging SSR mirror — prod itself is static HTML
-  // with no draft-mode capability, so previews always happen on staging.
-  plugins: [...sharedPlugins, presentationFor(ensureUrl(STAGING_URL, 'SITE_URL_STAGING'))],
+  plugins: sharedPlugins,
 });
 
 const localWorkspace = () => ({
@@ -90,7 +90,7 @@ const localWorkspace = () => ({
   title: 'Local',
   basePath: '/',
   dataset: 'development',
-  plugins: [...sharedPlugins, presentationFor(ensureUrl(LOCAL_URL, 'SITE_URL')), visionTool()],
+  plugins: [...sharedPlugins, presentationFor(ensureUrl(SITE_URL, 'SITE_URL')), visionTool()],
 });
 
 // STUDIO_TARGET selects WHICH studio bundle is built:
