@@ -11,7 +11,56 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  validate:
+    name: Typecheck, lint & dedupe check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Only run the dedupe check when dep-defining files change.
+      - uses: dorny/paths-filter@v3
+        id: deps-filter
+        with:
+          filters: |
+            deps:
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: package.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # NODE_OPTIONS bumps Node's max heap because pnpm dedupe holds the full
+      # resolution tree in memory and OOMs at the default ~1.5GB on large monorepos.
+      - name: Check for duplicate dependencies
+        if: steps.deps-filter.outputs.deps == 'true'
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: pnpm dedupe --check
+
+      - name: TypeScript check
+        env:
+          SKIP_ENV_VALIDATION: true
+        run: pnpm ts
+
+      - name: Lint
+        run: pnpm lint
+
   deploy:
+    needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
