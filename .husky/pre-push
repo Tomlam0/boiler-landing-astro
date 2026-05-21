@@ -25,4 +25,34 @@ if [ "$current_branch" = "$protected_branch" ]; then
     exit 1
 fi
 
+# Run `pnpm dedupe --check` only if dependency files changed in the commits
+# being pushed. Catches lockfile drift locally instead of waiting for CI.
+remote_branch="origin/$current_branch"
+dep_pattern='^(package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml)$'
+
+if git rev-parse --verify "$remote_branch" >/dev/null 2>&1; then
+    changed_files=$(git diff --name-only "$remote_branch"...HEAD)
+else
+    # New branch with no remote yet — inspect all commits on this branch.
+    changed_files=$(git log --name-only --pretty=format: HEAD)
+fi
+
+if echo "$changed_files" | grep -qE "$dep_pattern"; then
+    echo "📦 Dependency files changed — checking lockfile is deduped..."
+    if ! pnpm dedupe --check >/dev/null 2>&1; then
+        echo ""
+        echo "================================================================"
+        echo "ERROR: pnpm-lock.yaml is not deduped."
+        echo "================================================================"
+        echo "Run the following locally, then re-push:"
+        echo ""
+        echo "    pnpm dedupe"
+        echo "    git add pnpm-lock.yaml"
+        echo "    git commit -m '🔧 chore(deps): pnpm dedupe lockfile'"
+        echo "----------------------------------------------------------------"
+        exit 1
+    fi
+    echo "✅ Lockfile is deduped"
+fi
+
 exit 0
